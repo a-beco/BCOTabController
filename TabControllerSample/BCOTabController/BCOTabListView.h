@@ -13,7 +13,7 @@
 
 @property (nonatomic, weak) id<BCOTabListViewDelegate> delegate;
 
-@property (nonatomic, copy) NSArray *titles;
+@property (nonatomic, copy) NSArray *titles;    // array of NSString
 @property (nonatomic, copy) NSArray *tabColors; // array of BCOTabColor
 @property (nonatomic) NSUInteger selectedIndex;
 

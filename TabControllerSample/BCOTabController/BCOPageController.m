@@ -21,7 +21,7 @@ CGFloat getPreviousX(NSSet *touches, UIView *view)
 //==============================================
 
 const CGFloat kBCOPageControllerStartMovingThreshold = 30;
-const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.1;
+const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.2;
 
 typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     kBCOPageControllerMovingStateNone,

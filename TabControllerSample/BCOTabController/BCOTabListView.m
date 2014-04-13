@@ -161,7 +161,7 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
     }
     
     for (BCOTabItem *tabItem in _tabItems) {
-        tabItem.highlighted = NO;
+        [tabItem setHighlighted:NO animated:YES];
     }
     
     BCOTabItem *selectedTabItem = nil;
@@ -170,7 +170,7 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
     }
     
     selectedTabItem = _tabItems[_selectedIndex];
-    selectedTabItem.highlighted = YES;
+    [selectedTabItem setHighlighted:YES animated:YES];
 }
 
 - (void)p_moveToSelectionAnimated:(BOOL)animated

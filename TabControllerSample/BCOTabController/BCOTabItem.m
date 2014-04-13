@@ -15,7 +15,8 @@
 
 @end
 
-const CGFloat BCOTabItemDefaultTitleFontSize = 14;
+const CGFloat kBCOTabItemDefaultTitleFontSize = 14;
+const NSTimeInterval kBCOTabItemColorAnimationDuration = 0.17;
 
 @implementation BCOTabItem
 
@@ -32,7 +33,7 @@ const CGFloat BCOTabItemDefaultTitleFontSize = 14;
         _titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
         _titleLabel.text = _title;
         _titleLabel.textAlignment = NSTextAlignmentCenter;
-        _titleLabel.font = [UIFont systemFontOfSize:BCOTabItemDefaultTitleFontSize];
+        _titleLabel.font = [UIFont systemFontOfSize:kBCOTabItemDefaultTitleFontSize];
         [self addSubview:_titleLabel];
         
         [self p_updateColors];
@@ -57,6 +58,20 @@ const CGFloat BCOTabItemDefaultTitleFontSize = 14;
 {
     _highlighted = highlighted;
     [self p_updateColors];
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated
+{
+    _highlighted = highlighted;
+    
+    if (animated) {
+        [UIView animateWithDuration:kBCOTabItemColorAnimationDuration animations:^{
+            [self p_updateColors];
+        }];
+    }
+    else {
+        [self p_updateColors];
+    }
 }
 
 #pragma mark - action
