@@ -13,7 +13,6 @@
 		8E45608718F8551E00E336B9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E45608518F8551E00E336B9 /* InfoPlist.strings */; };
 		8E45608918F8551E00E336B9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E45608818F8551E00E336B9 /* main.m */; };
 		8E45608D18F8551E00E336B9 /* BCOAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E45608C18F8551E00E336B9 /* BCOAppDelegate.m */; };
-		8E45609018F8551E00E336B9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E45608E18F8551E00E336B9 /* Main.storyboard */; };
 		8E45609318F8551E00E336B9 /* BCOViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E45609218F8551E00E336B9 /* BCOViewController.m */; };
 		8E45609518F8551E00E336B9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E45609418F8551E00E336B9 /* Images.xcassets */; };
 		8E45609C18F8551E00E336B9 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E45609B18F8551E00E336B9 /* XCTest.framework */; };
@@ -21,6 +20,12 @@
 		8E45609E18F8551E00E336B9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E45608018F8551E00E336B9 /* UIKit.framework */; };
 		8E4560A618F8551E00E336B9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E4560A418F8551E00E336B9 /* InfoPlist.strings */; };
 		8E4560A818F8551E00E336B9 /* TabControllerSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560A718F8551E00E336B9 /* TabControllerSampleTests.m */; };
+		8E4560B318F8557600E336B9 /* BCOTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560B218F8557600E336B9 /* BCOTabController.m */; };
+		8E4560B618F98DA800E336B9 /* BCOTabListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560B518F98DA800E336B9 /* BCOTabListView.m */; };
+		8E4560B918F9977C00E336B9 /* BCOTabInfoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560B818F9977C00E336B9 /* BCOTabInfoManager.m */; };
+		8E4560BC18F997D000E336B9 /* BCOTabColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560BB18F997D000E336B9 /* BCOTabColor.m */; };
+		8E4560BE18F9989800E336B9 /* allTabInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8E4560BD18F9989800E336B9 /* allTabInfo.plist */; };
+		8E4560C318F9A6AB00E336B9 /* BCOTabItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560C218F9A6AB00E336B9 /* BCOTabItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,7 +49,6 @@
 		8E45608A18F8551E00E336B9 /* TabControllerSample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TabControllerSample-Prefix.pch"; sourceTree = "<group>"; };
 		8E45608B18F8551E00E336B9 /* BCOAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BCOAppDelegate.h; sourceTree = "<group>"; };
 		8E45608C18F8551E00E336B9 /* BCOAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BCOAppDelegate.m; sourceTree = "<group>"; };
-		8E45608F18F8551E00E336B9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8E45609118F8551E00E336B9 /* BCOViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BCOViewController.h; sourceTree = "<group>"; };
 		8E45609218F8551E00E336B9 /* BCOViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BCOViewController.m; sourceTree = "<group>"; };
 		8E45609418F8551E00E336B9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -53,6 +57,17 @@
 		8E4560A318F8551E00E336B9 /* TabControllerSampleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TabControllerSampleTests-Info.plist"; sourceTree = "<group>"; };
 		8E4560A518F8551E00E336B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8E4560A718F8551E00E336B9 /* TabControllerSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TabControllerSampleTests.m; sourceTree = "<group>"; };
+		8E4560B118F8557600E336B9 /* BCOTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCOTabController.h; path = BCOTabController/BCOTabController.h; sourceTree = "<group>"; };
+		8E4560B218F8557600E336B9 /* BCOTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabController.m; path = BCOTabController/BCOTabController.m; sourceTree = "<group>"; };
+		8E4560B418F98DA800E336B9 /* BCOTabListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCOTabListView.h; path = BCOTabController/BCOTabListView.h; sourceTree = "<group>"; };
+		8E4560B518F98DA800E336B9 /* BCOTabListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabListView.m; path = BCOTabController/BCOTabListView.m; sourceTree = "<group>"; };
+		8E4560B718F9977C00E336B9 /* BCOTabInfoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCOTabInfoManager.h; sourceTree = "<group>"; };
+		8E4560B818F9977C00E336B9 /* BCOTabInfoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCOTabInfoManager.m; sourceTree = "<group>"; };
+		8E4560BB18F997D000E336B9 /* BCOTabColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabColor.m; path = BCOTabController/BCOTabColor.m; sourceTree = "<group>"; };
+		8E4560BD18F9989800E336B9 /* allTabInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = allTabInfo.plist; sourceTree = "<group>"; };
+		8E4560C118F9A6AB00E336B9 /* BCOTabItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCOTabItem.h; path = BCOTabController/BCOTabItem.h; sourceTree = "<group>"; };
+		8E4560C218F9A6AB00E336B9 /* BCOTabItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabItem.m; path = BCOTabController/BCOTabItem.m; sourceTree = "<group>"; };
+		8E4560C418FA6BE700E336B9 /* BCOTabColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCOTabColor.h; path = BCOTabController/BCOTabColor.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,9 +129,11 @@
 			children = (
 				8E45608B18F8551E00E336B9 /* BCOAppDelegate.h */,
 				8E45608C18F8551E00E336B9 /* BCOAppDelegate.m */,
-				8E45608E18F8551E00E336B9 /* Main.storyboard */,
 				8E45609118F8551E00E336B9 /* BCOViewController.h */,
 				8E45609218F8551E00E336B9 /* BCOViewController.m */,
+				8E4560C518FA6BF400E336B9 /* BCOTabController */,
+				8E4560B718F9977C00E336B9 /* BCOTabInfoManager.h */,
+				8E4560B818F9977C00E336B9 /* BCOTabInfoManager.m */,
 				8E45609418F8551E00E336B9 /* Images.xcassets */,
 				8E45608318F8551E00E336B9 /* Supporting Files */,
 			);
@@ -126,6 +143,7 @@
 		8E45608318F8551E00E336B9 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8E4560BD18F9989800E336B9 /* allTabInfo.plist */,
 				8E45608418F8551E00E336B9 /* TabControllerSample-Info.plist */,
 				8E45608518F8551E00E336B9 /* InfoPlist.strings */,
 				8E45608818F8551E00E336B9 /* main.m */,
@@ -150,6 +168,21 @@
 				8E4560A418F8551E00E336B9 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8E4560C518FA6BF400E336B9 /* BCOTabController */ = {
+			isa = PBXGroup;
+			children = (
+				8E4560B118F8557600E336B9 /* BCOTabController.h */,
+				8E4560B218F8557600E336B9 /* BCOTabController.m */,
+				8E4560B418F98DA800E336B9 /* BCOTabListView.h */,
+				8E4560B518F98DA800E336B9 /* BCOTabListView.m */,
+				8E4560C118F9A6AB00E336B9 /* BCOTabItem.h */,
+				8E4560C218F9A6AB00E336B9 /* BCOTabItem.m */,
+				8E4560C418FA6BE700E336B9 /* BCOTabColor.h */,
+				8E4560BB18F997D000E336B9 /* BCOTabColor.m */,
+			);
+			name = BCOTabController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -231,7 +264,7 @@
 			files = (
 				8E45609518F8551E00E336B9 /* Images.xcassets in Resources */,
 				8E45608718F8551E00E336B9 /* InfoPlist.strings in Resources */,
-				8E45609018F8551E00E336B9 /* Main.storyboard in Resources */,
+				8E4560BE18F9989800E336B9 /* allTabInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -250,6 +283,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8E4560B618F98DA800E336B9 /* BCOTabListView.m in Sources */,
+				8E4560C318F9A6AB00E336B9 /* BCOTabItem.m in Sources */,
+				8E4560BC18F997D000E336B9 /* BCOTabColor.m in Sources */,
+				8E4560B318F8557600E336B9 /* BCOTabController.m in Sources */,
+				8E4560B918F9977C00E336B9 /* BCOTabInfoManager.m in Sources */,
 				8E45609318F8551E00E336B9 /* BCOViewController.m in Sources */,
 				8E45608918F8551E00E336B9 /* main.m in Sources */,
 				8E45608D18F8551E00E336B9 /* BCOAppDelegate.m in Sources */,
@@ -281,14 +319,6 @@
 				8E45608618F8551E00E336B9 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		8E45608E18F8551E00E336B9 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8E45608F18F8551E00E336B9 /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		8E4560A418F8551E00E336B9 /* InfoPlist.strings */ = {
