@@ -29,40 +29,43 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
 @dynamic tabColors;
 @dynamic selectedIndex;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        [self initialize];
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self initialize];
+    }
+    return self;
+}
+
 - (id)init
 {
     return [self initWithNibName:nil bundle:nil];
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (void)initialize
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.view.backgroundColor = [UIColor whiteColor];
-        
-        _tabListView = [[BCOTabListView alloc] initWithFrame:CGRectZero];
-        _tabListView.delegate = self;
-        [self.view addSubview:_tabListView];
-        
-        _pageController = [[BCOPageController alloc] init];
-        _pageController.delegate = self;
-        _pageController.dataSource = self;
-        [self.view addSubview:_pageController.view];
-        [self addChildViewController:_pageController];
-        
-        [self p_layoutViews];
-
-        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-        [center addObserver:self
-                   selector:@selector(applicationDidChangeStatusBarFrameNotification:)
-                       name:UIApplicationDidChangeStatusBarFrameNotification
-                     object:nil];
-        [center addObserver:self
-                   selector:@selector(applicationDidBecomeActiveNotification:)
-                       name:UIApplicationDidBecomeActiveNotification
-                     object:nil];
-    }
-    return self;
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    // notifications
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self
+               selector:@selector(applicationDidChangeStatusBarFrameNotification:)
+                   name:UIApplicationDidChangeStatusBarFrameNotification
+                 object:nil];
+    [center addObserver:self
+               selector:@selector(applicationDidBecomeActiveNotification:)
+                   name:UIApplicationDidBecomeActiveNotification
+                 object:nil];
 }
 
 - (void)dealloc
@@ -73,6 +76,20 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    // サブビューを作成
+    _tabListView = [[BCOTabListView alloc] initWithFrame:CGRectZero];
+    _tabListView.delegate = self;
+    [self.view addSubview:_tabListView];
+    
+    _pageController = [[BCOPageController alloc] init];
+    _pageController.delegate = self;
+    _pageController.dataSource = self;
+    [self.view addSubview:_pageController.view];
+    [self addChildViewController:_pageController];
+    
+    // サブビューをレイアウト
+    [self p_layoutViews];
 }
 
 - (void)didReceiveMemoryWarning

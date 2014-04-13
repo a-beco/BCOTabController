@@ -41,23 +41,39 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     BCOPageControllerMovingState _movingState;
 }
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        [self initialize];
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self initialize];
+    }
+    return self;
+}
+
 - (id)init
 {
     return [self initWithNibName:nil bundle:nil];
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (void)initialize
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.view.multipleTouchEnabled = NO;
-    }
-    return self;
+    // 将来的に何かやるかもしれないので一応用意
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.view.multipleTouchEnabled = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -83,6 +99,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     CGFloat distance = _touchBeginX - _currentX;
     
     if (_movingState == kBCOPageControllerMovingStateNone && !_movingViewController) {
+        // 一定幅X方向にスライドしたらビューを動かし始める
         if (distance > kBCOPageControllerStartMovingThreshold) {
             [self p_startMovingWithState:kBCOPageControllerMovingStateNext];
         }
@@ -91,6 +108,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         }
     }
     else {
+        // _currentXに合わせてビューを動かす
         [self p_layoutMovingViewAnimated:YES completion:nil];
     }
 }
@@ -104,6 +122,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     _currentX = getX(touches, self.view);
     CGFloat previousX = getPreviousX(touches, self.view);
     
+    // 直前のタッチ座標から指が動いている方向を判定し、cancelかcompleteか判断する
     if (previousX - _currentX > 0) {
         if (_movingState == kBCOPageControllerMovingStateNext) {
             [self p_completeMovingAnimated:YES];

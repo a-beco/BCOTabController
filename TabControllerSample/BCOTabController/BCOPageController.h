@@ -20,12 +20,16 @@
 
 @protocol BCOPageControllerDelegate <NSObject>
 
-- (void)pageController:(BCOPageController *)pageController didMoveToIndex:(NSUInteger)index;
+// ページが移動した時に呼ばれる
+- (void)pageController:(BCOPageController *)pageController
+        didMoveToIndex:(NSUInteger)index;
 
 @end
 
 @protocol BCOPageControllerDataSource <NSObject>
 
+// index番目のビューコントローラを返すようにする。
+// nilを返せば移動しない。
 - (UIViewController *)pageController:(BCOPageController *)pageController
                         pageForIndex:(NSUInteger)index;
 

@@ -9,27 +9,27 @@
 		<string>jp.beco.tab1</string>
 		<key>backgroundColor</key>
 		<array>
-			<real>0.7</real>
-			<real>0.7</real>
-			<real>0.7</real>
+			<real>0.9</real>
+			<real>0.9</real>
+			<real>0.9</real>
 		</array>
 		<key>textColor</key>
 		<array>
-			<integer>0</integer>
-			<integer>0</integer>
-			<integer>0</integer>
+			<real>0</real>
+			<real>0</real>
+			<real>0</real>
 		</array>
 		<key>highlightedBackgroundColor</key>
 		<array>
-			<real>0.3</real>
-			<real>0.3</real>
-			<real>0.3</real>
+			<real>0.4</real>
+			<real>0.4</real>
+			<real>0.4</real>
 		</array>
 		<key>highlightedTextColor</key>
 		<array>
 			<real>1</real>
-			<integer>1</integer>
-			<integer>1</integer>
+			<real>1</real>
+			<real>1</real>
 		</array>
 	</dict>
 	<dict>
@@ -39,27 +39,27 @@
 		<string>jp.beco.tab2</string>
 		<key>backgroundColor</key>
 		<array>
-			<real>0.7</real>
-			<real>0.7</real>
-			<real>0.7</real>
+			<real>0.9</real>
+			<real>0.9</real>
+			<real>0.9</real>
 		</array>
 		<key>textColor</key>
 		<array>
-			<integer>0</integer>
-			<integer>0</integer>
-			<integer>0</integer>
+			<real>0</real>
+			<real>0</real>
+			<real>0</real>
 		</array>
 		<key>highlightedBackgroundColor</key>
 		<array>
-			<real>0.3</real>
-			<real>0.3</real>
-			<real>0.3</real>
+			<real>0.4</real>
+			<real>0.4</real>
+			<real>0.4</real>
 		</array>
 		<key>highlightedTextColor</key>
 		<array>
 			<real>1</real>
-			<integer>1</integer>
-			<integer>1</integer>
+			<real>1</real>
+			<real>1</real>
 		</array>
 	</dict>
 	<dict>
@@ -69,27 +69,27 @@
 		<string>jp.beco.tab3</string>
 		<key>backgroundColor</key>
 		<array>
-			<real>0.7</real>
-			<real>0.7</real>
-			<real>0.7</real>
+			<real>0.9</real>
+			<real>0.9</real>
+			<real>0.9</real>
 		</array>
 		<key>textColor</key>
 		<array>
-			<integer>0</integer>
-			<integer>0</integer>
-			<integer>0</integer>
+			<real>0</real>
+			<real>0</real>
+			<real>0</real>
 		</array>
 		<key>highlightedBackgroundColor</key>
 		<array>
-			<real>0.3</real>
-			<real>0.3</real>
-			<real>0.3</real>
+			<real>0.4</real>
+			<real>0.4</real>
+			<real>0.4</real>
 		</array>
 		<key>highlightedTextColor</key>
 		<array>
 			<real>1</real>
-			<integer>1</integer>
-			<integer>1</integer>
+			<real>1</real>
+			<real>1</real>
 		</array>
 	</dict>
 	<dict>
@@ -99,27 +99,27 @@
 		<string>jp.beco.tab4</string>
 		<key>backgroundColor</key>
 		<array>
-			<real>0.7</real>
-			<real>0.7</real>
-			<real>0.7</real>
+			<real>0.9</real>
+			<real>0.9</real>
+			<real>0.9</real>
 		</array>
 		<key>textColor</key>
 		<array>
-			<integer>0</integer>
-			<integer>0</integer>
-			<integer>0</integer>
+			<real>0</real>
+			<real>0</real>
+			<real>0</real>
 		</array>
 		<key>highlightedBackgroundColor</key>
 		<array>
-			<real>0.3</real>
-			<real>0.3</real>
-			<real>0.3</real>
+			<real>0.4</real>
+			<real>0.4</real>
+			<real>0.4</real>
 		</array>
 		<key>highlightedTextColor</key>
 		<array>
 			<real>1</real>
-			<integer>1</integer>
-			<integer>1</integer>
+			<real>1</real>
+			<real>1</real>
 		</array>
 	</dict>
 	<dict>
@@ -129,27 +129,27 @@
 		<string>jp.beco.tab5</string>
 		<key>backgroundColor</key>
 		<array>
-			<real>0.7</real>
-			<real>0.7</real>
-			<real>0.7</real>
+			<real>0.9</real>
+			<real>0.9</real>
+			<real>0.9</real>
 		</array>
 		<key>textColor</key>
 		<array>
-			<integer>0</integer>
-			<integer>0</integer>
-			<integer>0</integer>
+			<real>0</real>
+			<real>0</real>
+			<real>0</real>
 		</array>
 		<key>highlightedBackgroundColor</key>
 		<array>
-			<real>0.3</real>
-			<real>0.3</real>
-			<real>0.3</real>
+			<real>0.4</real>
+			<real>0.4</real>
+			<real>0.4</real>
 		</array>
 		<key>highlightedTextColor</key>
 		<array>
 			<real>1</real>
-			<integer>1</integer>
-			<integer>1</integer>
+			<real>1</real>
+			<real>1</real>
 		</array>
 	</dict>
 </array>
