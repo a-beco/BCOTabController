@@ -93,10 +93,6 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
     [self p_updateSelection];
     [self p_updateBorderBackgroundColor];
     [self p_moveToSelectionAnimated:YES];
-    
-    if ([_delegate respondsToSelector:@selector(tabListView:didChangeSelectedIndex:)]) {
-        [_delegate tabListView:self didChangeSelectedIndex:_selectedIndex];
-    }
 }
 
 #pragma mark - private
@@ -201,6 +197,10 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
 {
     NSUInteger tappedIndex = [_tabItems indexOfObject:tabItem];
     self.selectedIndex = tappedIndex;
+    
+    if ([_delegate respondsToSelector:@selector(tabListView:didTapIndex:)]) {
+        [_delegate tabListView:self didTapIndex:_selectedIndex];
+    }
 }
 
 @end

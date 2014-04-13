@@ -7,16 +7,19 @@
 //
 
 #import "BCOTabController.h"
+#import "BCOPageController.h"
 #import "BCOTabListView.h"
 
 
 const CGFloat BCOTabControllerStatusBarHeight = 20.0;
 const CGFloat BCOTabControllerTabListViewHeight = 44.0;
 
-@interface BCOTabController () <BCOTabListViewDelegate>
+@interface BCOTabController () <BCOTabListViewDelegate,
+                                BCOPageControllerDelegate,
+                                BCOPageControllerDataSource>
 
+@property (nonatomic, strong) BCOPageController *pageController;
 @property (nonatomic, strong) BCOTabListView *tabListView;
-@property (nonatomic, strong) UIView *containerView;
 
 @end
 
@@ -40,6 +43,12 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
         _tabListView = [[BCOTabListView alloc] initWithFrame:CGRectZero];
         _tabListView.delegate = self;
         [self.view addSubview:_tabListView];
+        
+        _pageController = [[BCOPageController alloc] init];
+        _pageController.delegate = self;
+        _pageController.dataSource = self;
+        [self.view addSubview:_pageController.view];
+        [self addChildViewController:_pageController];
         
         [self p_layoutViews];
 
@@ -78,7 +87,7 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
     _viewControllers = [viewControllers copy];
     _tabListView.titles = [self p_viewControllerTitles];
     
-    self.selectedIndex = _tabListView.selectedIndex;
+    [self p_showViewControllerAtIndex:self.selectedIndex];
 }
 
 - (NSArray *)tabColors
@@ -118,13 +127,11 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
                                     self.view.bounds.size.width,
                                     BCOTabControllerTabListViewHeight);
     
-    if (_containerView) {
-        CGFloat containerY = _tabListView.frame.origin.y + _tabListView.frame.size.height;
-        _containerView.frame = CGRectMake(0,
-                                          containerY,
-                                          self.view.bounds.size.width,
-                                          self.view.bounds.size.height - containerY);
-    }
+    CGFloat containerY = _tabListView.frame.origin.y + _tabListView.frame.size.height;
+    _pageController.view.frame = CGRectMake(0,
+                                            containerY,
+                                            self.view.bounds.size.width,
+                                            self.view.bounds.size.height - containerY);
 }
 
 - (void)p_showViewControllerAtIndex:(NSUInteger)index
@@ -133,21 +140,11 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
         return;
     }
     
-    for (UIViewController *vc in self.childViewControllers) {
-        [vc removeFromParentViewController];
-        [vc.view removeFromSuperview];
-    }
-    
     if ([_viewControllers count] <= index) {
         index = 0;
     }
     
-    UIViewController *viewController = _viewControllers[index];
-    self.containerView = viewController.view;
-    [self.view addSubview:_containerView];
-    [self addChildViewController:viewController];
-    
-    [self p_layoutViews];
+    _pageController.selectedIndex = index;
 }
 
 - (NSArray *)p_viewControllerTitles
@@ -159,11 +156,29 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
     return [titlesBuf copy];
 }
 
-#pragma mark - delegate
+#pragma mark - BCOTabListView delegate
 
-- (void)tabListView:(BCOTabListView *)tabListView didChangeSelectedIndex:(NSUInteger)selectedIndex
+- (void)tabListView:(BCOTabListView *)tabListView didTapIndex:(NSUInteger)selectedIndex
 {
     [self p_showViewControllerAtIndex:selectedIndex];
+}
+
+#pragma mark - BCOPageController delegate
+
+- (void)pageController:(BCOPageController *)pageController didMoveToIndex:(NSUInteger)index
+{
+    _tabListView.selectedIndex = index;
+}
+
+#pragma mark - BCOPageController dataSource
+
+- (UIViewController *)pageController:(BCOPageController *)pageController pageForIndex:(NSUInteger)index
+{
+    if (index >= [_viewControllers count]) {
+        return nil;
+    }
+    
+    return _viewControllers[index];
 }
 
 #pragma mark - notification

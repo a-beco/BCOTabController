@@ -21,6 +21,6 @@
 
 @protocol BCOTabListViewDelegate <NSObject>
 
-- (void)tabListView:(BCOTabListView *)tabListView didChangeSelectedIndex:(NSUInteger)selectedIndex;
+- (void)tabListView:(BCOTabListView *)tabListView didTapIndex:(NSUInteger)selectedIndex;
 
 @end

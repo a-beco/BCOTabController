@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BCOTabColor.h"
 
 @interface BCOTabController : UIViewController
 
-@property (nonatomic, copy) NSArray *viewControllers;   // array of UIViewController
+@property (nonatomic, copy) NSArray *viewControllers;     // array of UIViewController
 @property (nonatomic, copy) NSArray *tabColors;           // array of BCOTabColor
 
 @property (nonatomic, readonly) UIViewController *selectedViewController;
