@@ -23,9 +23,9 @@
 		8E4560B318F8557600E336B9 /* BCOTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560B218F8557600E336B9 /* BCOTabController.m */; };
 		8E4560B618F98DA800E336B9 /* BCOTabListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560B518F98DA800E336B9 /* BCOTabListView.m */; };
 		8E4560B918F9977C00E336B9 /* BCOTabInfoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560B818F9977C00E336B9 /* BCOTabInfoManager.m */; };
-		8E4560BC18F997D000E336B9 /* BCOTabColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560BB18F997D000E336B9 /* BCOTabColor.m */; };
 		8E4560BE18F9989800E336B9 /* allTabInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8E4560BD18F9989800E336B9 /* allTabInfo.plist */; };
 		8E4560C318F9A6AB00E336B9 /* BCOTabItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560C218F9A6AB00E336B9 /* BCOTabItem.m */; };
+		8E4560C718FA70F300E336B9 /* BCOTabColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4560C618FA70F300E336B9 /* BCOTabColor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,11 +63,11 @@
 		8E4560B518F98DA800E336B9 /* BCOTabListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabListView.m; path = BCOTabController/BCOTabListView.m; sourceTree = "<group>"; };
 		8E4560B718F9977C00E336B9 /* BCOTabInfoManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCOTabInfoManager.h; sourceTree = "<group>"; };
 		8E4560B818F9977C00E336B9 /* BCOTabInfoManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCOTabInfoManager.m; sourceTree = "<group>"; };
-		8E4560BB18F997D000E336B9 /* BCOTabColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabColor.m; path = BCOTabController/BCOTabColor.m; sourceTree = "<group>"; };
 		8E4560BD18F9989800E336B9 /* allTabInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = allTabInfo.plist; sourceTree = "<group>"; };
 		8E4560C118F9A6AB00E336B9 /* BCOTabItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCOTabItem.h; path = BCOTabController/BCOTabItem.h; sourceTree = "<group>"; };
 		8E4560C218F9A6AB00E336B9 /* BCOTabItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabItem.m; path = BCOTabController/BCOTabItem.m; sourceTree = "<group>"; };
 		8E4560C418FA6BE700E336B9 /* BCOTabColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCOTabColor.h; path = BCOTabController/BCOTabColor.h; sourceTree = "<group>"; };
+		8E4560C618FA70F300E336B9 /* BCOTabColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTabColor.m; path = BCOTabController/BCOTabColor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,7 +180,7 @@
 				8E4560C118F9A6AB00E336B9 /* BCOTabItem.h */,
 				8E4560C218F9A6AB00E336B9 /* BCOTabItem.m */,
 				8E4560C418FA6BE700E336B9 /* BCOTabColor.h */,
-				8E4560BB18F997D000E336B9 /* BCOTabColor.m */,
+				8E4560C618FA70F300E336B9 /* BCOTabColor.m */,
 			);
 			name = BCOTabController;
 			sourceTree = "<group>";
@@ -285,7 +285,7 @@
 			files = (
 				8E4560B618F98DA800E336B9 /* BCOTabListView.m in Sources */,
 				8E4560C318F9A6AB00E336B9 /* BCOTabItem.m in Sources */,
-				8E4560BC18F997D000E336B9 /* BCOTabColor.m in Sources */,
+				8E4560C718FA70F300E336B9 /* BCOTabColor.m in Sources */,
 				8E4560B318F8557600E336B9 /* BCOTabController.m in Sources */,
 				8E4560B918F9977C00E336B9 /* BCOTabInfoManager.m in Sources */,
 				8E45609318F8551E00E336B9 /* BCOViewController.m in Sources */,
