@@ -21,7 +21,6 @@ CGFloat getPreviousX(NSSet *touches, UIView *view)
 //==============================================
 
 const CGFloat kBCOPageControllerStartMovingThreshold = 10;
-const CGFloat kBCOPageControllerLengthFromFingerToRightEdge = 20;
 const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.2;
 
 typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
@@ -109,7 +108,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
     else {
         // _currentXに合わせてビューを動かす
-        [self p_layoutMovingViewAnimated:YES completion:nil];
+        [self p_layoutMovingViewAnimated:YES];
     }
 }
 
@@ -189,44 +188,61 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)p_layoutBaseView
 {
-    if (_baseViewController) {
-        _baseViewController.view.frame = CGRectMake(0,
-                                                    0,
-                                                    self.view.bounds.size.width,
-                                                    self.view.bounds.size.height);
-    }
-}
-
-- (void)p_layoutMovingViewAnimated:(BOOL)animated completion:(void (^)(void))completion
-{
-    if (_movingState == kBCOPageControllerMovingStateNone) {
+    if (!_baseViewController) {
         return;
     }
     
-    if (_movingViewController) {
-        [self.view bringSubviewToFront:_movingViewController.view];
-        
-        CGSize movingViewSize = _movingViewController.view.bounds.size;
-        if (animated) {
-            [UIView animateWithDuration:kBCOPageControllerMovingAnimationDuration animations:^{
-                
-                CGFloat moveXTo = _currentX - movingViewSize.width + kBCOPageControllerLengthFromFingerToRightEdge;
-                if (moveXTo > 0) {
-                    moveXTo = 0;
-                }
-                _movingViewController.view.frame = CGRectMake(moveXTo,
-                                                              0,
-                                                              movingViewSize.width,
-                                                              movingViewSize.height);
-            } completion:^(BOOL finished) {
-                if (completion) {
-                    completion();
-                }
-            }];
-        }
-        else {
-            completion();
-        }
+    _baseViewController.view.frame = CGRectMake(0,
+                                                0,
+                                                self.view.bounds.size.width,
+                                                self.view.bounds.size.height);
+}
+
+- (void)p_layoutMovingViewAnimated:(BOOL)animated
+{
+    if (_movingState == kBCOPageControllerMovingStateNone || !_movingViewController) {
+        return;
+    }
+    
+    [self.view bringSubviewToFront:_movingViewController.view];
+    
+    CGSize movingViewSize = _movingViewController.view.bounds.size;
+    
+    CGFloat destinationX = 0;
+    if (_movingState == kBCOPageControllerMovingStateNext) {
+        destinationX = -(_touchBeginX - _currentX);
+    }
+    else if (_movingState == kBCOPageControllerMovingStatePrevious) {
+        destinationX = _currentX - movingViewSize.width;
+    }
+    
+    if (destinationX > 0) {
+        destinationX = 0;
+    }
+    
+    [self p_moveMovingViewToX:destinationX animated:animated completion:nil];
+}
+
+- (void)p_moveMovingViewToX:(CGFloat)x animated:(BOOL)animated completion:(void (^)(void))completion
+{
+    CGSize movingViewSize = _movingViewController.view.bounds.size;
+    CGRect toFrame = CGRectMake(x,
+                                0,
+                                movingViewSize.width,
+                                movingViewSize.height);
+    
+    if (animated) {
+        [UIView animateWithDuration:kBCOPageControllerMovingAnimationDuration animations:^{
+            _movingViewController.view.frame = toFrame;
+        } completion:^(BOOL finished) {
+            if (completion) {
+                completion();
+            }
+        }];
+    }
+    else {
+        _movingViewController.view.frame = toFrame;
+        completion();
     }
 }
 
@@ -263,15 +279,20 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     _movingState = movingState;
     
     [self p_layoutBaseView];
-    [self p_layoutMovingViewAnimated:YES completion:nil];
+    [self p_layoutMovingViewAnimated:YES];
 }
 
 - (void)p_cancelMovingAnimated:(BOOL)animated
 {
-    _currentX = (_movingState == kBCOPageControllerMovingStateNext) ? self.view.bounds.size.width : 0;
-    _currentX -= kBCOPageControllerLengthFromFingerToRightEdge;
+    CGFloat destinationX = 0;
+    if (_movingState == kBCOPageControllerMovingStateNext) {
+        destinationX = 0;
+    }
+    else {
+        destinationX = -self.view.bounds.size.width;
+    }
     
-    [self p_layoutMovingViewAnimated:animated completion:^{
+    [self p_moveMovingViewToX:destinationX animated:YES completion:^{
         
         if (_movingState == kBCOPageControllerMovingStateNext) {
             [_baseViewController.view removeFromSuperview];
@@ -292,10 +313,15 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         return;
     }
     
-    _currentX = (_movingState == kBCOPageControllerMovingStateNext) ? 0 : self.view.bounds.size.width;
-    _currentX -= kBCOPageControllerLengthFromFingerToRightEdge;
+    CGFloat destinationX = 0;
+    if (_movingState == kBCOPageControllerMovingStateNext) {
+        destinationX = -self.view.bounds.size.width;
+    }
+    else {
+        destinationX = 0;
+    }
     
-    [self p_layoutMovingViewAnimated:animated completion:^{
+    [self p_moveMovingViewToX:destinationX animated:YES completion:^{
         
         if (_movingState == kBCOPageControllerMovingStateNext) {
             [_movingViewController.view removeFromSuperview];

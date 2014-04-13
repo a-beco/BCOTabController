@@ -140,7 +140,7 @@ const CGFloat BCOTabControllerTabListViewHeight = 44.0;
 - (void)p_layoutViews
 {
     _tabListView.frame = CGRectMake(0,
-                                    [UIApplication sharedApplication].statusBarFrame.size.height,
+                                    BCOTabControllerStatusBarHeight,
                                     self.view.bounds.size.width,
                                     BCOTabControllerTabListViewHeight);
     
