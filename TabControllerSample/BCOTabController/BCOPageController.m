@@ -190,7 +190,12 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         CGSize movingViewSize = _movingViewController.view.bounds.size;
         if (animated) {
             [UIView animateWithDuration:kBCOPageControllerMovingAnimationDuration animations:^{
-                _movingViewController.view.frame = CGRectMake(_currentX - movingViewSize.width + kBCOPageControllerLengthFromFingerToRightEdge,
+                
+                CGFloat moveXTo = _currentX - movingViewSize.width + kBCOPageControllerLengthFromFingerToRightEdge;
+                if (moveXTo > 0) {
+                    moveXTo = 0;
+                }
+                _movingViewController.view.frame = CGRectMake(moveXTo,
                                                               0,
                                                               movingViewSize.width,
                                                               movingViewSize.height);
