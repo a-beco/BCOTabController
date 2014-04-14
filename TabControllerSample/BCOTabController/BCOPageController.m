@@ -21,7 +21,7 @@ CGFloat getPreviousX(NSSet *touches, UIView *view)
 //==============================================
 
 const CGFloat kBCOPageControllerStartMovingThreshold = 30;
-const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.2;
+const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.3;
 
 typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     kBCOPageControllerMovingStateNone,
@@ -198,6 +198,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
                                                 self.view.bounds.size.height);
 }
 
+// これ自体いらない
 - (void)p_layoutMovingViewAnimated:(BOOL)animated
 {
     if (_movingState == kBCOPageControllerMovingStateNone || !_movingViewController) {
@@ -221,6 +222,18 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
     
     [self p_moveMovingViewToX:destinationX animated:animated completion:nil];
+}
+
+- (void)startTarckingMovingView
+{
+    // TODO: タイマーを回して常に付いてくるようにする
+    // 座標は_currentXから計算する。
+    // スピードは常に一定。
+}
+
+- (void)endTrackingMovingView
+{
+    // タイマーを解除、cancwl時とcomplete時にトラッキングを解除してから、moveMovingViewで所定の位置へ動かす。
 }
 
 - (void)p_moveMovingViewToX:(CGFloat)x animated:(BOOL)animated completion:(void (^)(void))completion
