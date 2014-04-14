@@ -206,6 +206,22 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 - (void)p_startTarckingMovingView
 {
     [self.view bringSubviewToFront:_movingViewController.view];
+    
+    // moving view の位置を調整
+    CGSize movingViewSize = _movingViewController.view.bounds.size;
+    if (_movingState == kBCOPageControllerMovingStateNext) {
+        _movingViewController.view.frame = CGRectMake(0,
+                                                      0,
+                                                      movingViewSize.width,
+                                                      movingViewSize.height);
+    }
+    else {
+        _movingViewController.view.frame = CGRectMake(-movingViewSize.width,
+                                                      0,
+                                                      movingViewSize.width,
+                                                      movingViewSize.height);
+    }
+    
     self.trackingTimer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                                           target:self
                                                         selector:@selector(trackingFired:)
@@ -266,7 +282,6 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)p_startMovingWithState:(BCOPageControllerMovingState)movingState
 {
-    NSLog(@"start");
     if (movingState == kBCOPageControllerMovingStateNone) {
         return;
     }
@@ -333,7 +348,6 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)p_completeMovingAnimated:(BOOL)animated
 {
-    NSLog(@"complete");
     if (_movingState == kBCOPageControllerMovingStateNone) {
         return;
     }
@@ -350,7 +364,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     
     _isAnimating = YES;
     [self p_moveMovingViewToX:destinationX animated:YES completion:^{
-        NSLog(@"complete completion");
+
         if (_movingState == kBCOPageControllerMovingStateNext) {
             [_movingViewController.view removeFromSuperview];
             [_movingViewController removeFromParentViewController];
