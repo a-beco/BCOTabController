@@ -27,7 +27,7 @@ const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.3;
 typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     kBCOPageControllerMovingStateNone,
     kBCOPageControllerMovingStateNext,
-    kBCOPageControllerMovingStatePrevious
+    kBCOPageControllerMovingStatePrevious,
 };
 
 @interface BCOPageController ()
@@ -40,6 +40,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     CGFloat _touchBeginX;
     CGFloat _currentX;
     BCOPageControllerMovingState _movingState;
+    BOOL _isAnimating;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -118,7 +119,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (_movingState == kBCOPageControllerMovingStateNone) {
+    if (_movingState == kBCOPageControllerMovingStateNone || _isAnimating) {
         return;
     }
     
@@ -265,6 +266,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)p_startMovingWithState:(BCOPageControllerMovingState)movingState
 {
+    NSLog(@"start");
     if (movingState == kBCOPageControllerMovingStateNone) {
         return;
     }
@@ -312,6 +314,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     
     [self p_endTrackingMovingView];
     
+    _isAnimating = YES;
     [self p_moveMovingViewToX:destinationX animated:YES completion:^{
         
         if (_movingState == kBCOPageControllerMovingStateNext) {
@@ -324,11 +327,13 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         self.movingViewController = nil;
         
         _movingState = kBCOPageControllerMovingStateNone;
+        _isAnimating = NO;
     }];
 }
 
 - (void)p_completeMovingAnimated:(BOOL)animated
 {
+    NSLog(@"complete");
     if (_movingState == kBCOPageControllerMovingStateNone) {
         return;
     }
@@ -343,8 +348,9 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     
     [self p_endTrackingMovingView];
     
+    _isAnimating = YES;
     [self p_moveMovingViewToX:destinationX animated:YES completion:^{
-        
+        NSLog(@"complete completion");
         if (_movingState == kBCOPageControllerMovingStateNext) {
             [_movingViewController.view removeFromSuperview];
             [_movingViewController removeFromParentViewController];
@@ -366,6 +372,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         }
         
         _movingState = kBCOPageControllerMovingStateNone;
+        _isAnimating = NO;
         
         if ([_delegate respondsToSelector:@selector(pageController:didMoveToIndex:)]) {
             [_delegate pageController:self didMoveToIndex:_selectedIndex];
