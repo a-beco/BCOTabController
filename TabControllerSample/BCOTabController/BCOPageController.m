@@ -21,6 +21,7 @@ CGFloat getPreviousX(NSSet *touches, UIView *view)
 //==============================================
 
 const CGFloat kBCOPageControllerStartMovingThreshold = 30;
+const CGFloat kBCOPageControllerVelocityGradient = 0.2;
 const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.3;
 
 typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
@@ -32,6 +33,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 @interface BCOPageController ()
 @property (nonatomic, strong) UIViewController *baseViewController;
 @property (nonatomic, strong) UIViewController *movingViewController;
+@property (nonatomic, strong) NSTimer *trackingTimer;
 @end
 
 @implementation BCOPageController {
@@ -75,6 +77,12 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     self.view.multipleTouchEnabled = NO;
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self p_cancelMovingAnimated:NO];
+    [_trackingTimer invalidate];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [self p_reloadView];
@@ -105,10 +113,6 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         else if (distance < -kBCOPageControllerStartMovingThreshold) {
             [self p_startMovingWithState:kBCOPageControllerMovingStatePrevious];
         }
-    }
-    else {
-        // _currentXに合わせてビューを動かす
-        [self p_layoutMovingViewAnimated:YES];
     }
 }
 
@@ -198,42 +202,42 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
                                                 self.view.bounds.size.height);
 }
 
-// これ自体いらない
-- (void)p_layoutMovingViewAnimated:(BOOL)animated
+- (void)p_startTarckingMovingView
+{
+    [self.view bringSubviewToFront:_movingViewController.view];
+    self.trackingTimer = [NSTimer scheduledTimerWithTimeInterval:0.01
+                                                          target:self
+                                                        selector:@selector(trackingFired:)
+                                                        userInfo:nil
+                                                         repeats:YES];
+}
+
+- (void)p_endTrackingMovingView
+{
+    [_trackingTimer invalidate];
+}
+
+- (void)trackingFired:(NSTimer *)timer
 {
     if (_movingState == kBCOPageControllerMovingStateNone || !_movingViewController) {
+        [self p_endTrackingMovingView];
         return;
     }
     
-    [self.view bringSubviewToFront:_movingViewController.view];
-    
-    CGSize movingViewSize = _movingViewController.view.bounds.size;
-    
+    CGRect movingViewFrame = _movingViewController.view.frame;
     CGFloat destinationX = 0;
     if (_movingState == kBCOPageControllerMovingStateNext) {
         destinationX = -(_touchBeginX - _currentX);
     }
     else if (_movingState == kBCOPageControllerMovingStatePrevious) {
-        destinationX = _currentX - movingViewSize.width;
+        destinationX = _currentX - movingViewFrame.size.width;
     }
     
-    if (destinationX > 0) {
-        destinationX = 0;
-    }
+    // 移動先に近づくほどステップ幅が小さくなるよう調整
+    CGFloat diffX = destinationX - movingViewFrame.origin.x;
+    CGFloat step = kBCOPageControllerVelocityGradient * diffX;
     
-    [self p_moveMovingViewToX:destinationX animated:animated completion:nil];
-}
-
-- (void)startTarckingMovingView
-{
-    // TODO: タイマーを回して常に付いてくるようにする
-    // 座標は_currentXから計算する。
-    // スピードは常に一定。
-}
-
-- (void)endTrackingMovingView
-{
-    // タイマーを解除、cancwl時とcomplete時にトラッキングを解除してから、moveMovingViewで所定の位置へ動かす。
+    _movingViewController.view.frame = CGRectOffset(movingViewFrame, step, 0);
 }
 
 - (void)p_moveMovingViewToX:(CGFloat)x animated:(BOOL)animated completion:(void (^)(void))completion
@@ -292,18 +296,21 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     _movingState = movingState;
     
     [self p_layoutBaseView];
-    [self p_layoutMovingViewAnimated:YES];
+    [self p_startTarckingMovingView];
 }
 
 - (void)p_cancelMovingAnimated:(BOOL)animated
 {
-    CGFloat destinationX = 0;
-    if (_movingState == kBCOPageControllerMovingStateNext) {
-        destinationX = 0;
+    if (!_movingViewController) {
+        return;
     }
-    else {
+    
+    CGFloat destinationX = 0;
+    if (_movingState == kBCOPageControllerMovingStatePrevious) {
         destinationX = -self.view.bounds.size.width;
     }
+    
+    [self p_endTrackingMovingView];
     
     [self p_moveMovingViewToX:destinationX animated:YES completion:^{
         
@@ -333,6 +340,8 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     else {
         destinationX = 0;
     }
+    
+    [self p_endTrackingMovingView];
     
     [self p_moveMovingViewToX:destinationX animated:YES completion:^{
         
