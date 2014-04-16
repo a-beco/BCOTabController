@@ -12,7 +12,7 @@
 
 
 const CGFloat BCOTabControllerStatusBarHeight = 20.0;
-const CGFloat BCOTabControllerTabListViewHeight = 52.0;
+const CGFloat BCOTabControllerTabListViewHeight = 50.0;
 
 @interface BCOTabController () <BCOTabListViewDelegate,
                                 BCOPageControllerDelegate,

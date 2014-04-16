@@ -11,7 +11,7 @@
 #import "BCOTabInfoManager.h"
 
 @interface BCOViewController ()
-
+@property (nonatomic, strong) UIWebView *webView;
 @end
 
 @implementation BCOViewController
@@ -19,6 +19,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+    [self.view addSubview:_webView];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    _webView.frame = self.view.bounds;
+    
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:@"http://google.com"]];
+    [_webView loadRequest:request];
 }
 
 - (void)didReceiveMemoryWarning

@@ -7,6 +7,7 @@
 //
 
 #import "BCOAppDelegate.h"
+#import "BCOViewController.h"
 #import "BCOTabController.h"
 #import "BCOTabInfoManager.h"
 
@@ -23,7 +24,7 @@
     NSArray *titles = [BCOTabInfoManager sharedManager].allTitles;
     for (int i = 0; i < [titles count]; i++) {
         NSString *title = titles[i];
-        UIViewController *vc = [[UIViewController alloc] init];
+        BCOViewController *vc = [[BCOViewController alloc] init];
         vc.title = title;
         vc.view.backgroundColor = colors[i];
         [viewControllersBuf addObject:vc];
