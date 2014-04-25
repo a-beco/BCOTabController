@@ -7,6 +7,7 @@
 //
 
 #import "BCOPageController.h"
+#import "BCOTouchRooter.h"
 
 CGFloat getX(NSSet *touches, UIView *view)
 {
@@ -30,10 +31,11 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     kBCOPageControllerMovingStatePrevious,
 };
 
-@interface BCOPageController ()
+@interface BCOPageController () <BCOTouchReceiver>
 @property (nonatomic, strong) UIViewController *baseViewController;
 @property (nonatomic, strong) UIViewController *movingViewController;
 @property (nonatomic, strong) NSTimer *trackingTimer;
+@property (nonatomic, strong) UIControl *blockTouchCoverView;
 @end
 
 @implementation BCOPageController {
@@ -68,7 +70,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)initialize
 {
-    // 将来的に何かやるかもしれないので一応用意
+    // 将来的に何かするかも
 }
 
 - (void)viewDidLoad
@@ -84,9 +86,22 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     [_trackingTimer invalidate];
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    // タッチイベントのレシーバから削除
+    BCOTouchRooter *rooter = [BCOTouchRooter sharedRooter];
+    [rooter removeReceiver:self];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self p_reloadView];
+    // 表示される直前にページをリロード
+    [self p_reloadPage];
+    
+    // タッチイベントのレシーバに指定
+    BCOTouchRooter *rooter = [BCOTouchRooter sharedRooter];
+    [rooter addReceiver:self];
+    [rooter filterForReceiver:self].blockMask |= BCOTouchFilterMaskHitViewIsNotSubview;
 }
 
 - (void)didReceiveMemoryWarning
@@ -96,12 +111,12 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 #pragma mark - touch
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)didReceiveTouchesBegan:(NSSet *)touches event:(UIEvent *)event
 {
     _touchBeginX = getX(touches, self.view);
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)didReceiveTouchesMoved:(NSSet *)touches event:(UIEvent *)event
 {
     _currentX = getX(touches, self.view);
     CGFloat distance = _touchBeginX - _currentX;
@@ -117,7 +132,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)didReceiveTouchesEnded:(NSSet *)touches event:(UIEvent *)event
 {
     if (_movingState == kBCOPageControllerMovingStateNone || _isAnimating) {
         return;
@@ -145,7 +160,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)didReceiveTouchesCancelled:(NSSet *)touches event:(UIEvent *)event
 {
     if (_movingState == kBCOPageControllerMovingStateNone) {
         return;
@@ -156,6 +171,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 #pragma mark - property
 
+// ページのインデックスをセットするとページを移動
 - (void)setSelectedIndex:(NSUInteger)selectedIndex
 {
     UIViewController *nextViewController = [self p_viewControllerFromDataSourceAtIndex:selectedIndex];
@@ -164,33 +180,39 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
     
     _selectedIndex = selectedIndex;
-    [self p_reloadView];
+    [self p_reloadPage];
 }
 
 #pragma mark - private
 
-- (void)p_reloadView
+// ビューを再ロード
+- (void)p_reloadPage
 {
-    UIViewController *currentViewController = [self p_viewControllerFromDataSourceAtIndex:_selectedIndex];
-    if (!currentViewController) {
+    UIViewController *displayViewController = [self p_viewControllerFromDataSourceAtIndex:_selectedIndex];
+    if (!displayViewController) {
         return;
     }
     
+    // ビューを動かしているときであれば一旦キャンセル
     if (_movingViewController) {
         [self p_cancelMovingAnimated:NO];
     }
     
+    // 現在表示しているビューを取り除く
     if (_baseViewController) {
         [_baseViewController.view removeFromSuperview];
         [_baseViewController removeFromParentViewController];
     }
     
-    self.baseViewController = currentViewController;
+    // 表示するビューをセット
+    self.baseViewController = displayViewController;
     [self.view addSubview:_baseViewController.view];
     [self addChildViewController:_baseViewController];
+    
     [self p_layoutBaseView];
 }
 
+// 表示するビューを位置合わせ
 - (void)p_layoutBaseView
 {
     if (!_baseViewController) {
@@ -203,6 +225,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
                                                 self.view.bounds.size.height);
 }
 
+// 指の動きに_movingViewControllerを追尾させる処理を開始
 - (void)p_startTarckingMovingView
 {
     [self.view bringSubviewToFront:_movingViewController.view];
@@ -222,25 +245,29 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
                                                       movingViewSize.height);
     }
     
+    // trackingFired:で
     self.trackingTimer = [NSTimer scheduledTimerWithTimeInterval:0.01
                                                           target:self
-                                                        selector:@selector(trackingFired:)
+                                                        selector:@selector(p_trackingFired:)
                                                         userInfo:nil
                                                          repeats:YES];
 }
 
+// 指の動きに_movingViewControllerを追尾させる処理を終了
 - (void)p_endTrackingMovingView
 {
     [_trackingTimer invalidate];
 }
 
-- (void)trackingFired:(NSTimer *)timer
+// 指の位置に合わせて_movingViewControllerのviewを動かす
+- (void)p_trackingFired:(NSTimer *)timer
 {
     if (_movingState == kBCOPageControllerMovingStateNone || !_movingViewController) {
         [self p_endTrackingMovingView];
         return;
     }
     
+    // 移動するX座標を決める
     CGRect movingViewFrame = _movingViewController.view.frame;
     CGFloat destinationX = 0;
     if (_movingState == kBCOPageControllerMovingStateNext) {
@@ -257,6 +284,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     _movingViewController.view.frame = CGRectOffset(movingViewFrame, step, 0);
 }
 
+// xの位置に_movingViewControllerを移動させる
 - (void)p_moveMovingViewToX:(CGFloat)x animated:(BOOL)animated completion:(void (^)(void))completion
 {
     CGSize movingViewSize = _movingViewController.view.bounds.size;
@@ -280,6 +308,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
 }
 
+// 水平方向のページ移動を開始
 - (void)p_startMovingWithState:(BCOPageControllerMovingState)movingState
 {
     if (movingState == kBCOPageControllerMovingStateNone) {
@@ -287,6 +316,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
     
     if (movingState == kBCOPageControllerMovingStateNext) {
+        // 次のページに移動
         UIViewController *nextViewController = [self p_viewControllerFromDataSourceAtIndex:_selectedIndex + 1];
         if (!nextViewController) {
             return;
@@ -297,6 +327,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         self.baseViewController = nextViewController;
     }
     else {
+        // 前のページに移動
         if (_selectedIndex == 0) {
             return;
         }
@@ -314,8 +345,12 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     
     [self p_layoutBaseView];
     [self p_startTarckingMovingView];
+    
+    // 通常のタッチを制限
+    [self p_blockAllTouches:YES];
 }
 
+// 水平方向のページ移動をキャンセル
 - (void)p_cancelMovingAnimated:(BOOL)animated
 {
     if (!_movingViewController) {
@@ -343,28 +378,33 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         
         _movingState = kBCOPageControllerMovingStateNone;
         _isAnimating = NO;
+        
+        // 通常のタッチ制限を解除
+        [self p_blockAllTouches:NO];
     }];
 }
 
+// 水平方向のページ移動を完了する
 - (void)p_completeMovingAnimated:(BOOL)animated
 {
     if (_movingState == kBCOPageControllerMovingStateNone) {
         return;
     }
     
+    // ページが移動するX座標を決定
     CGFloat destinationX = 0;
     if (_movingState == kBCOPageControllerMovingStateNext) {
         destinationX = -self.view.bounds.size.width;
     }
-    else {
-        destinationX = 0;
-    }
     
+    // タッチ座標の追跡を終了
     [self p_endTrackingMovingView];
     
+    // 指定したX座標に_movingViewControllerを移動させる
     _isAnimating = YES;
     [self p_moveMovingViewToX:destinationX animated:YES completion:^{
 
+        // _movingViewControllerを削除して、_baseViewControllerを表示する
         if (_movingState == kBCOPageControllerMovingStateNext) {
             [_movingViewController.view removeFromSuperview];
             [_movingViewController removeFromParentViewController];
@@ -388,6 +428,9 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         _movingState = kBCOPageControllerMovingStateNone;
         _isAnimating = NO;
         
+        // 通常のタッチ制限を解除
+        [self p_blockAllTouches:NO];
+        
         if ([_delegate respondsToSelector:@selector(pageController:didMoveToIndex:)]) {
             [_delegate pageController:self didMoveToIndex:_selectedIndex];
         }
@@ -400,6 +443,13 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         return [_dataSource pageController:self pageForIndex:index];
     }
     return nil;
+}
+
+// UIContolのビューを全体に貼って通常のビューへのタッチを不可能にする。
+// 途中でデバイスの向きが変わったりしたら対応できないが、現状は
+- (void)p_blockAllTouches:(BOOL)isBlocked
+{
+    [[BCOTouchRooter sharedRooter] defaultFilter].blocked = isBlocked;
 }
 
 @end

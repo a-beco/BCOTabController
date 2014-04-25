@@ -18,15 +18,12 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     
     // 表示するViewControllerを用意
-    NSArray *colors = @[[UIColor redColor], [UIColor yellowColor], [UIColor blueColor], [UIColor greenColor], [UIColor purpleColor]];
-    
     NSMutableArray *viewControllersBuf = @[].mutableCopy;
     NSArray *titles = [BCOTabInfoManager sharedManager].allTitles;
     for (int i = 0; i < [titles count]; i++) {
         NSString *title = titles[i];
         BCOViewController *vc = [[BCOViewController alloc] init];
         vc.title = title;
-        vc.view.backgroundColor = colors[i];
         [viewControllersBuf addObject:vc];
     }
     

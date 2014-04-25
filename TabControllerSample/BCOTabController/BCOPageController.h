@@ -13,6 +13,8 @@
 
 @property (nonatomic, weak) id<BCOPageControllerDelegate> delegate;
 @property (nonatomic, weak) id<BCOPageControllerDataSource> dataSource;
+
+// ページのインデックスをセットするとページを移動
 @property (nonatomic) NSUInteger selectedIndex;
 
 @end
