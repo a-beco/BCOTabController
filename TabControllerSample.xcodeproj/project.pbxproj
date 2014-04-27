@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8E33071E190A8CBA00C4584F /* BCOTouchRooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E33071D190A8CBA00C4584F /* BCOTouchRooter.m */; };
+		8E2F00F8190D6C9400768E8B /* BCOTouchRooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2F00F7190D6C9400768E8B /* BCOTouchRooter.m */; };
 		8E45607D18F8551E00E336B9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E45607C18F8551E00E336B9 /* Foundation.framework */; };
 		8E45607F18F8551E00E336B9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E45607E18F8551E00E336B9 /* CoreGraphics.framework */; };
 		8E45608118F8551E00E336B9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E45608018F8551E00E336B9 /* UIKit.framework */; };
@@ -41,8 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8E33071C190A8CBA00C4584F /* BCOTouchRooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BCOTouchRooter.h; sourceTree = "<group>"; };
-		8E33071D190A8CBA00C4584F /* BCOTouchRooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BCOTouchRooter.m; sourceTree = "<group>"; };
+		8E2F00F6190D6C9400768E8B /* BCOTouchRooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BCOTouchRooter.h; path = BCOTabController/BCOTouchRooter/BCOTouchRooter.h; sourceTree = "<group>"; };
+		8E2F00F7190D6C9400768E8B /* BCOTouchRooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BCOTouchRooter.m; path = BCOTabController/BCOTouchRooter/BCOTouchRooter.m; sourceTree = "<group>"; };
 		8E45607918F8551E00E336B9 /* TabControllerSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TabControllerSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E45607C18F8551E00E336B9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8E45607E18F8551E00E336B9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -100,6 +100,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8E2F00F5190D6C5D00768E8B /* BCOTouchRooter */ = {
+			isa = PBXGroup;
+			children = (
+				8E2F00F6190D6C9400768E8B /* BCOTouchRooter.h */,
+				8E2F00F7190D6C9400768E8B /* BCOTouchRooter.m */,
+			);
+			name = BCOTouchRooter;
+			sourceTree = "<group>";
+		};
 		8E45607018F8551E00E336B9 = {
 			isa = PBXGroup;
 			children = (
@@ -189,8 +198,7 @@
 				8E4560C218F9A6AB00E336B9 /* BCOTabItem.m */,
 				8E4560C418FA6BE700E336B9 /* BCOTabColor.h */,
 				8E4560C618FA70F300E336B9 /* BCOTabColor.m */,
-				8E33071C190A8CBA00C4584F /* BCOTouchRooter.h */,
-				8E33071D190A8CBA00C4584F /* BCOTouchRooter.m */,
+				8E2F00F5190D6C5D00768E8B /* BCOTouchRooter */,
 			);
 			name = BCOTabController;
 			sourceTree = "<group>";
@@ -295,12 +303,12 @@
 			files = (
 				8E4560B618F98DA800E336B9 /* BCOTabListView.m in Sources */,
 				8E4560C318F9A6AB00E336B9 /* BCOTabItem.m in Sources */,
+				8E2F00F8190D6C9400768E8B /* BCOTouchRooter.m in Sources */,
 				8E4560CA18FA730900E336B9 /* BCOPageController.m in Sources */,
 				8E4560C718FA70F300E336B9 /* BCOTabColor.m in Sources */,
 				8E4560B318F8557600E336B9 /* BCOTabController.m in Sources */,
 				8E4560B918F9977C00E336B9 /* BCOTabInfoManager.m in Sources */,
 				8E45609318F8551E00E336B9 /* BCOViewController.m in Sources */,
-				8E33071E190A8CBA00C4584F /* BCOTouchRooter.m in Sources */,
 				8E45608918F8551E00E336B9 /* main.m in Sources */,
 				8E45608D18F8551E00E336B9 /* BCOAppDelegate.m in Sources */,
 			);
