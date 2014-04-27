@@ -75,26 +75,15 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
     return self;
 }
 
-- (void)receiveTouch:(UITouch *)touch
+// 現在のタッチイベントを保存する。
+// 同じタッチイベントがすでにあるときは無視する。
+- (void)saveCurrentTouch:(UITouch *)touch
 {
-    BCOTouchObject *touchObjectShouldBeRemoved = nil;
     for (BCOTouchObject *aTouchObject in _touchObjects) {
         if (aTouchObject.touch == touch) {
-            // endかcancelならリストから削除する
-            if (touch.phase == UITouchPhaseEnded
-                     || touch.phase == UITouchPhaseCancelled) {
-                touchObjectShouldBeRemoved = aTouchObject;
-                break;
-            }
-            
             // 同じタッチイベントは複数保持しない
             return;
         }
-    }
-    
-    if (touchObjectShouldBeRemoved) {
-        [_touchObjects removeObject:touchObjectShouldBeRemoved];
-        return;
     }
     
     // タッチ開始時のみタッチオブジェクトを配列に追加する
@@ -103,6 +92,25 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
         touchObject.touch = touch;
         touchObject.hitView = touch.view;
         [_touchObjects addObject:touchObject];
+    }
+}
+
+// touchesEndedかtouchesCancelledならリストから削除
+- (void)removeObsoleteTouches
+{
+    NSMutableArray *touchObjectsShouldBeRemoved = @[].mutableCopy;
+    for (BCOTouchObject *aTouchObject in _touchObjects) {
+        // endかcancelならリストから削除する
+        if (aTouchObject.touch.phase == UITouchPhaseEnded
+            || aTouchObject.touch.phase == UITouchPhaseCancelled) {
+            [touchObjectsShouldBeRemoved addObject:aTouchObject];
+        }
+    }
+    
+    if ([touchObjectsShouldBeRemoved count] > 0) {
+        for (BCOTouchObject *removeObject in touchObjectsShouldBeRemoved) {
+            [_touchObjects removeObject:removeObject];
+        }
     }
 }
 
@@ -405,7 +413,7 @@ static BCOTouchRooter *p_sharedRooter = nil;
         NSSet *allTouches = [event allTouches];
         for (UITouch *touch in allTouches) {
             
-            [[BCOTouchObjectManager sharedManager] receiveTouch:touch];
+            [[BCOTouchObjectManager sharedManager] saveCurrentTouch:touch];
             
             // フィルタでブロック
             if ([filter shouldBlockTouch:touch toObject:receiver]) {
@@ -429,6 +437,8 @@ static BCOTouchRooter *p_sharedRooter = nil;
                     break;
             }
         }
+        
+        [[BCOTouchObjectManager sharedManager] removeObsoleteTouches];
         
         if ([beganSet count] > 0
             && [receiver respondsToSelector:@selector(didReceiveTouchesBegan:event:)]) {
