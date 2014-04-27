@@ -10,21 +10,6 @@
 #import <objc/runtime.h>
 
 
-#pragma mark - BCOTouchRootingInfo
-//====================================
-// BCOTouchRootingInfo (private)
-//
-// レシーバオブジェクトとそのフィルタを紐づけるためのクラス。
-//====================================
-@interface BCOTouchRootingInfo : NSObject 
-@property (nonatomic, strong) id<BCOTouchReceiver> receiver;
-@property (nonatomic, strong) BCOTouchFilter *filter;
-@end
-
-@implementation BCOTouchRootingInfo
-@end
-
-
 #pragma mark - BCOTouchObject
 //====================================
 // BCOTouchObject (private)
@@ -48,6 +33,8 @@
 // 現在のタッチイベントとそのヒットビューを管理するクラス。
 // （UITouchのviewプロパティがタッチ途中でnilになることがあるため、
 // ヒットビューが取得できなくなる問題があったため作成。）
+// BCOTouchRooterでタッチを追加し、BCOTouchFilterから
+// ヒットビューを取得するのに使用。
 //====================================
 @interface BCOTouchObjectManager : NSObject
 @property (nonatomic, strong) NSMutableArray *touchObjects;
@@ -258,6 +245,22 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
 @end
 
 
+#pragma mark - BCOTouchRootingInfo
+//====================================
+// BCOTouchRootingInfo (private)
+//
+// レシーバオブジェクトとそのフィルタを紐づけるためのクラス。
+// BCOTouchRooter内で使用。
+//====================================
+@interface BCOTouchRootingInfo : NSObject
+@property (nonatomic, strong) id<BCOTouchReceiver> receiver;
+@property (nonatomic, strong) BCOTouchFilter *filter;
+@end
+
+@implementation BCOTouchRootingInfo
+@end
+
+
 #pragma mark - UIWindow interface
 //====================================
 // UIWindow category
@@ -303,6 +306,8 @@ static BCOTouchRooter *p_sharedRooter = nil;
     }
     return self;
 }
+
+#pragma mark - BCOTouchRooter public
 
 + (BCOTouchRooter *)sharedRooter
 {
@@ -352,7 +357,7 @@ static BCOTouchRooter *p_sharedRooter = nil;
     return nil;
 }
 
-#pragma mark - private
+#pragma mark - BCOTouchRooter private
 
 - (BCOTouchRootingInfo *)p_touchRootingInfoOfReceiver:(id<BCOTouchReceiver>)receiver
 {
