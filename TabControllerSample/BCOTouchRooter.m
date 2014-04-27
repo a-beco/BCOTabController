@@ -26,12 +26,12 @@
 
 
 #pragma mark - BCOTouchObject
-//==========================
+//====================================
 // BCOTouchObject (private)
 //
 // UITouchインスタンスとその発生源のヒットビューを紐づけるためのオブジェクト。
 // BCOTouchObjectManager内部で管理する。
-//==========================
+//====================================
 @interface BCOTouchObject : NSObject
 @property (nonatomic, strong) UITouch *touch;
 @property (nonatomic, weak) UIView *hitView;
@@ -42,13 +42,13 @@
 
 
 #pragma mark - BCOTouchObjectManager
-//==========================
+//====================================
 // BCOTouchObjectManager (private)
 //
 // 現在のタッチイベントとそのヒットビューを管理するクラス。
 // （UITouchのviewプロパティがタッチ途中でnilになることがあるため、
 // ヒットビューが取得できなくなる問題があったため作成。）
-//==========================
+//====================================
 @interface BCOTouchObjectManager : NSObject
 @property (nonatomic, strong) NSMutableArray *touchObjects;
 @end
@@ -128,12 +128,12 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
 
 
 #pragma mark - BCOTouchFilter
-//==========================
+//====================================
 // BCOTouchFilter
 //
 // レシーバオブジェクトにタッチイベントを通知するか否かを
 // blockMaskで指定されたフラグに従って判断するクラス。
-//==========================
+//====================================
 @interface BCOTouchFilter ()
 
 @property (nonatomic, strong) NSMutableArray *rootingTouches;
@@ -259,11 +259,11 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
 
 
 #pragma mark - UIWindow interface
-//==========================================
+//====================================
 // UIWindow category
 //
 // method swizzling 用のメソッド
-//==========================================
+//====================================
 @interface UIWindow (swizzling)
 
 - (void)sendEvent_receive:(UIEvent *)event;
@@ -272,9 +272,9 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
 
 
 #pragma mark - BCOTouchRooter
-//==========================
+//====================================
 // BCOTouchRooter
-//==========================
+//====================================
 @interface BCOTouchRooter ()
 
 @property (nonatomic, strong) NSMutableArray *rootingInfoArray;
@@ -388,11 +388,11 @@ static BCOTouchRooter *p_sharedRooter = nil;
 
 
 #pragma mark - UIWindow implementation
-//==========================================
+//====================================
 // UIWindow category
 //
 // method swizzling用のメソッド
-//==========================================
+//====================================
 @implementation UIWindow (swizzling)
 
 // UIWindowのsendEventをこのメソッドで置き換える。

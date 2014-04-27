@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+// タブの色をまとめて持つクラス。
 @interface BCOTabColor : NSObject <NSCopying>
 
 @property (nonatomic, readonly) UIColor *backgroundColor;

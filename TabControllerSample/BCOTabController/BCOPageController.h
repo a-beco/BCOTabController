@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+
+// スライドでページを切り替えるビューコントローラ。
 @protocol BCOPageControllerDelegate, BCOPageControllerDataSource;
 @interface BCOPageController : UIViewController
 

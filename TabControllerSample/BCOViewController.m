@@ -30,6 +30,10 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     _webView.frame = self.view.bounds;
+    
+    if ([self.title isEqualToString:@"tab3"]) {
+        self.title = @"abc";
+    }
 }
 
 - (void)didReceiveMemoryWarning

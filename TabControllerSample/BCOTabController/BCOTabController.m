@@ -11,8 +11,9 @@
 #import "BCOTabListView.h"
 
 
-const CGFloat BCOTabControllerStatusBarHeight = 20.0;
-const CGFloat BCOTabControllerTabListViewHeight = 50.0;
+const CGFloat kBCOTabControllerStatusBarHeight = 20.0;
+const CGFloat kBCOTabControllerTabListViewHeight = 50.0;
+NSString * const kViewControllerTitleKey = @"title";
 
 @interface BCOTabController () <BCOTabListViewDelegate,
                                 BCOPageControllerDelegate,
@@ -71,6 +72,7 @@ const CGFloat BCOTabControllerTabListViewHeight = 50.0;
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self p_removeViewControllerKVO];
 }
 
 - (void)viewDidLoad
@@ -101,10 +103,13 @@ const CGFloat BCOTabControllerTabListViewHeight = 50.0;
 
 - (void)setViewControllers:(NSArray *)viewControllers
 {
+    [self p_removeViewControllerKVO];
+    
     _viewControllers = [viewControllers copy];
-    _tabListView.titles = [self p_viewControllerTitles];
+    [self p_updateTabListTitles];
     
     [self p_showViewControllerAtIndex:self.selectedIndex];
+    [self p_addViewControllersKVO];
 }
 
 - (NSArray *)tabColors
@@ -140,9 +145,9 @@ const CGFloat BCOTabControllerTabListViewHeight = 50.0;
 - (void)p_layoutViews
 {
     _tabListView.frame = CGRectMake(0,
-                                    BCOTabControllerStatusBarHeight,
+                                    kBCOTabControllerStatusBarHeight,
                                     self.view.bounds.size.width,
-                                    BCOTabControllerTabListViewHeight);
+                                    kBCOTabControllerTabListViewHeight);
     
     CGFloat containerY = _tabListView.frame.origin.y + _tabListView.frame.size.height;
     _pageController.view.frame = CGRectMake(0,
@@ -171,6 +176,28 @@ const CGFloat BCOTabControllerTabListViewHeight = 50.0;
         [titlesBuf addObject:vc.title];
     }
     return [titlesBuf copy];
+}
+
+- (void)p_addViewControllersKVO
+{
+    for (UIViewController *vc in _viewControllers) {
+        [vc addObserver:self
+             forKeyPath:kViewControllerTitleKey
+                options:NSKeyValueObservingOptionNew
+                context:nil];
+    }
+}
+
+- (void)p_removeViewControllerKVO
+{
+    for (UIViewController *vc in _viewControllers) {
+        [vc removeObserver:self forKeyPath:kViewControllerTitleKey];
+    }
+}
+
+- (void)p_updateTabListTitles
+{
+    _tabListView.titles = [self p_viewControllerTitles];
 }
 
 #pragma mark - BCOTabListView delegate
@@ -208,6 +235,15 @@ const CGFloat BCOTabControllerTabListViewHeight = 50.0;
 - (void)applicationDidBecomeActiveNotification:(NSNotification *)notification
 {
     [self p_layoutViews];
+}
+
+#pragma mark - KVO
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kViewControllerTitleKey]) {
+        [self p_updateTabListTitles];
+    }
 }
 
 @end

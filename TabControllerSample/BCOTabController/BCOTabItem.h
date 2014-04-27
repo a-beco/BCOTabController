@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
+// BCOTabControllerのトップに配置するタブ。
 @class BCOTabColor;
 @protocol BCOTabItemDelegate;
 
@@ -18,8 +19,8 @@
 @property (nonatomic, getter = isHighlighted) BOOL highlighted;
 - (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated;
 
-@property (nonatomic, copy, readonly) NSString *title;
-@property (nonatomic, copy, readonly) BCOTabColor *color;
+@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) BCOTabColor *color;
 
 - (id)initWithFrame:(CGRect)frame
               title:(NSString *)title

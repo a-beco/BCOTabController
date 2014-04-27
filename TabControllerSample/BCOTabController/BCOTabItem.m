@@ -74,6 +74,18 @@ const NSTimeInterval kBCOTabItemColorAnimationDuration = 0.17;
     }
 }
 
+- (void)setTitle:(NSString *)title
+{
+    _title = [title copy];
+    _titleLabel.text = _title;
+}
+
+- (void)setColor:(BCOTabColor *)color
+{
+    _color = [color copy];
+    [self p_updateColors];
+}
+
 #pragma mark - action
 
 - (void)tap:(UITapGestureRecognizer *)tapGestureRecognizer

@@ -10,12 +10,21 @@
 #import "BCOTabColor.h"
 #import "BCOTabItem.h"
 
+// タブ直下の線の幅
 const NSUInteger kBCOTabListViewBottomBorderWidth = 5;
 
+// タブの横幅
 const CGFloat kBCOTabListViewTabWidth = 88;
+
+// タブ間の間隔
 const CGFloat kBCOTabListViewTabSpaceWidth = 5;
+
+// あるタブの左端から次のタブの左端までの距離
 const CGFloat kBCOTabListViewStepWidth = kBCOTabListViewTabWidth + kBCOTabListViewTabSpaceWidth;
+
+// タブ上の間隔
 const CGFloat kBCOTabListViewTabTopMargin = 5;
+
 
 @interface BCOTabListView () <BCOTabItemDelegate>
 
@@ -77,14 +86,19 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
 {
     _titles = [titles copy];
     
-    [self p_constractTabViews];
+    if (!_tabItems || [_tabItems count] != [_titles count]) {
+        [self p_constractTabViews];
+    }
+    else {
+        [self p_updateTitles];
+    }
 }
 
 - (void)setTabColors:(NSArray *)tabColors
 {
     _tabColors = [tabColors copy];
     
-    [self p_constractTabViews];
+    [self p_updateColors];
 }
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex
@@ -139,6 +153,29 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
     [self p_updateSelection];
     _scrollView.contentSize = CGSizeMake(kBCOTabListViewStepWidth * _titles.count - kBCOTabListViewTabSpaceWidth,
                                          _scrollView.bounds.size.height);
+}
+
+- (void)p_updateTitles
+{
+    for (int i = 0; i < [_tabItems count]; i++) {
+        if ([_titles count] > i) {
+            BCOTabItem *aTabItem = _tabItems[i];
+            aTabItem.title = _titles[i];
+        }
+    }
+}
+
+- (void)p_updateColors
+{
+    for (int i = 0; i < [_tabItems count]; i++) {
+        BCOTabItem *aTabItem = _tabItems[i];
+        if ([_tabColors count] > i) {
+            aTabItem.color = _tabColors[i];
+        }
+        else {
+            aTabItem.color = [self p_defaultTabColor];
+        }
+    }
 }
 
 - (void)p_updateBorderBackgroundColor

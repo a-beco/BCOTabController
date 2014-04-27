@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "BCOTabColor.h"
 
+// トップにタブを配置するコンテナビューコントローラ。
+// タブのタイトルはViewControllerのtitleプロパティが反映される。
 @interface BCOTabController : UIViewController
 
 @property (nonatomic, copy) NSArray *viewControllers;     // array of UIViewController
