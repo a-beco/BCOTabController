@@ -29,6 +29,7 @@ NSString * const kViewControllerTitleKey = @"title";
 
 @dynamic tabColors;
 @dynamic selectedIndex;
+@dynamic horizontalSwipeEnabled;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -138,6 +139,16 @@ NSString * const kViewControllerTitleKey = @"title";
 - (void)setSelectedIndex:(NSUInteger)selectedIndex
 {
     _tabListView.selectedIndex = selectedIndex;
+}
+
+- (BOOL)isHorizontalSwipeEnabled
+{
+    return _pageController.horizontalSwipeEnabled;
+}
+
+- (void)setHorizontalSwipeEnabled:(BOOL)horizontalSwipeEnabled
+{
+    _pageController.horizontalSwipeEnabled = horizontalSwipeEnabled;
 }
 
 #pragma mark - private

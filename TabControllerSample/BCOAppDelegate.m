@@ -22,6 +22,7 @@
     NSArray *titles = [BCOTabInfoManager sharedManager].allTitles;
     for (int i = 0; i < [titles count]; i++) {
         NSString *title = titles[i];
+        
         BCOViewController *vc = [[BCOViewController alloc] init];
         vc.title = title;
         [viewControllersBuf addObject:vc];

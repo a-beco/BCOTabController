@@ -11,7 +11,7 @@
 @protocol BCOTouchReceiver;
 @class BCOTouchFilter;
 
-// タッチイベントを通常通知されないオブジェクトにルーティングするクラス。
+// タッチイベントをルーティングするクラス。
 //
 // addReceiver:で追加されたレシーバオブジェクトに対し、タッチイベントを渡す。
 // filterForReceiver:で取得できるフィルタオブジェクトにblockMaskで、

@@ -19,6 +19,8 @@
 // ページのインデックスをセットするとページを移動
 @property (nonatomic) NSUInteger selectedIndex;
 
+@property (nonatomic, getter = isHorizontalSwipeEnabled) BOOL horizontalSwipeEnabled;
+
 @end
 
 

@@ -25,4 +25,7 @@
 // 現在選択中のタブのインデックス
 @property (nonatomic) NSUInteger selectedIndex;
 
+// 横スワイプでビューを移動するか
+@property (nonatomic, getter = isHorizontalSwipeEnabled) BOOL horizontalSwipeEnabled;
+
 @end

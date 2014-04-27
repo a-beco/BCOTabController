@@ -21,7 +21,7 @@ CGFloat getPreviousX(NSSet *touches, UIView *view)
 
 //==============================================
 
-const CGFloat kBCOPageControllerStartMovingThreshold = 30;
+const CGFloat kBCOPageControllerStartMovingThreshold = 50;
 const CGFloat kBCOPageControllerVelocityGradient = 0.2;
 const NSTimeInterval kBCOPageControllerMovingAnimationDuration = 0.3;
 
@@ -70,7 +70,8 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)initialize
 {
-    // 将来的に何かするかも
+    // インスタンス変数の初期化
+    _horizontalSwipeEnabled = YES;
 }
 
 - (void)viewDidLoad
@@ -88,6 +89,8 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    [self p_cancelMovingAnimated:NO];
+    
     // タッチイベントのレシーバから削除
     BCOTouchRooter *rooter = [BCOTouchRooter sharedRooter];
     [rooter removeReceiver:self];
@@ -98,7 +101,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     // 表示される直前にページをリロード
     [self p_reloadPage];
     
-    // タッチイベントのレシーバに指定
+    // タッチイベントを受け取るよう登録
     BCOTouchRooter *rooter = [BCOTouchRooter sharedRooter];
     [rooter addReceiver:self];
     [rooter filterForReceiver:self].blockMask = BCOTouchFilterMaskHitViewIsNotSubview
@@ -114,11 +117,19 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)didReceiveTouchesBegan:(NSSet *)touches event:(UIEvent *)event
 {
+    if (!_horizontalSwipeEnabled) {
+        return;
+    }
+    
     _touchBeginX = getX(touches, self.view);
 }
 
 - (void)didReceiveTouchesMoved:(NSSet *)touches event:(UIEvent *)event
 {
+    if (!_horizontalSwipeEnabled) {
+        return;
+    }
+    
     _currentX = getX(touches, self.view);
     CGFloat distance = _touchBeginX - _currentX;
     
@@ -135,7 +146,9 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)didReceiveTouchesEnded:(NSSet *)touches event:(UIEvent *)event
 {
-    if (_movingState == kBCOPageControllerMovingStateNone || _isAnimating) {
+    if (!_horizontalSwipeEnabled
+        || _movingState == kBCOPageControllerMovingStateNone
+        || _isAnimating) {
         return;
     }
     
@@ -163,7 +176,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 
 - (void)didReceiveTouchesCancelled:(NSSet *)touches event:(UIEvent *)event
 {
-    if (_movingState == kBCOPageControllerMovingStateNone) {
+    if (!_horizontalSwipeEnabled) {
         return;
     }
     
@@ -182,6 +195,15 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     
     _selectedIndex = selectedIndex;
     [self p_reloadPage];
+}
+
+- (void)setHorizontalSwipeEnabled:(BOOL)horizontalSwipeEnabled
+{
+    _horizontalSwipeEnabled = horizontalSwipeEnabled;
+    
+    if (!horizontalSwipeEnabled) {
+        [self p_cancelMovingAnimated:NO];
+    }
 }
 
 #pragma mark - private
@@ -354,7 +376,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 // 水平方向のページ移動をキャンセル
 - (void)p_cancelMovingAnimated:(BOOL)animated
 {
-    if (!_movingViewController) {
+    if (!_movingViewController || _movingState == kBCOPageControllerMovingStateNone) {
         return;
     }
     
