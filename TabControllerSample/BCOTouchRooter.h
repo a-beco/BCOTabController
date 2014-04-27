@@ -19,7 +19,10 @@
 
 + (BCOTouchRooter *)sharedRooter;
 
+// レシーバオブジェクトを通知リストに追加する。重複は無視。
 - (void)addReceiver:(id<BCOTouchReceiver>)receiver;
+
+// レシーバオブジェクトを通知リストから削除する。
 - (void)removeReceiver:(id<BCOTouchReceiver>)receiver;
 
 @end
@@ -50,12 +53,14 @@
 // BCOTouchFilterMaskOutOfViewBounds: ビューの矩形の中でなければブロック。UIView/UIViewController。
 // BCOTouchFilterMaskHitView: ヒットビューであればブロック。UIView/UIViewController。
 // BCOTouchFilterMaskNotHitView: ヒットビューでなければブロック。UIView/UIViewController。
-// BCOTouchFilterMaskNotOverlapWithHitView: ヒットビューと重なっていなければブロック。UIView/UIViewController。
+// BCOTouchFilterMaskHitViewIsNotSubview: ヒットビューが子孫のビューでなければブロック。UIView/UIViewController。
+// BCOTouchFilterMaskMultipleTouch: ２つ以上の通知が来たときは２つめ以降をブロック。
 typedef NS_OPTIONS(NSUInteger, BCOTouchFilterBlockMask) {
     BCOTouchFilterMaskOutOfViewBounds           = 1 << 0,
     BCOTouchFilterMaskHitView                   = 1 << 1,
     BCOTouchFilterMaskNotHitView                = 1 << 2,
     BCOTouchFilterMaskHitViewIsNotSubview       = 1 << 3,
+    BCOTouchFilterMaskMultipleTouch             = 1 << 4,
 };
 
 

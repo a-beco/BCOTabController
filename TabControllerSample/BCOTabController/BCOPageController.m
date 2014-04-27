@@ -101,7 +101,8 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     // タッチイベントのレシーバに指定
     BCOTouchRooter *rooter = [BCOTouchRooter sharedRooter];
     [rooter addReceiver:self];
-    [rooter filterForReceiver:self].blockMask |= BCOTouchFilterMaskHitViewIsNotSubview;
+    [rooter filterForReceiver:self].blockMask = BCOTouchFilterMaskHitViewIsNotSubview
+                                                | BCOTouchFilterMaskMultipleTouch;
 }
 
 - (void)didReceiveMemoryWarning
@@ -445,22 +446,40 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     return nil;
 }
 
-// UIContolのビューを全体に貼って通常のビューへのタッチを不可能にする。
-// 途中でデバイスの向きが変わったりしたら対応できないが、現状は
+// 全てのタッチイベントをブロックする。
+//
+// note: isBlockedをYESにした時に全てのUIScrollViewのscrollEnabledをNOにする。
+// そのあとNOを指定すれば元の状態に戻す。
 - (void)p_blockAllTouches:(BOOL)isBlocked
 {
     [[BCOTouchRooter sharedRooter] defaultFilter].blocked = isBlocked;
     
-    NSArray *allChildViews = [self p_allChildViewsBelowView:self.view];
-    for (UIView *aChildView in allChildViews) {
-        aChildView.userInteractionEnabled = !isBlocked;
-        if ([aChildView isKindOfClass:[UIScrollView class]]) {
-            ((UIScrollView *)aChildView).scrollEnabled = !isBlocked;
+    static NSMutableArray *disabledScrollViews = nil;
+    if (disabledScrollViews) {
+        for (UIScrollView *scrollView in disabledScrollViews) {
+            scrollView.scrollEnabled = YES;
+        }
+        disabledScrollViews = nil;
+    }
+    
+    // scrollEnabledがYESになっているscrollviewを見つけてscrollEnabledをNOにする
+    // NOにしたものはisBlockedをNOにした時に元に戻すので、副作用は最小限になる。
+    if (isBlocked) {
+        disabledScrollViews = @[].mutableCopy;
+        NSArray *allChildViews = [self p_allChildViewsBelowView:self.view];
+        for (UIView *aChildView in allChildViews) {
+            if ([aChildView isKindOfClass:[UIScrollView class]]) {
+                UIScrollView *scrollView = (UIScrollView *)aChildView;
+                if (scrollView.scrollEnabled == YES) {
+                    scrollView.scrollEnabled = NO;
+                    [disabledScrollViews addObject:scrollView];
+                }
+            }
         }
     }
 }
 
-// 引数view以下の全ての子ビュー、孫ビュー、ひ孫ビュー...を再帰的に取得し、NSArrayで返す
+// 引数view以下の全ての子ビュー、孫ビュー、ひ孫ビュー...を再帰的に取得し、NSArrayで返す。
 - (NSArray *)p_allChildViewsBelowView:(UIView *)view
 {
     NSMutableArray *subviewsBuf = @[].mutableCopy;
