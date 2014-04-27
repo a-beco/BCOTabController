@@ -10,21 +10,106 @@
 #import <objc/runtime.h>
 
 
+#pragma mark - BCOTouchRootingInfo
 //====================================
-// BCOTouchRootingInfo (private class)
+// BCOTouchRootingInfo (private)
 //====================================
 @interface BCOTouchRootingInfo : NSObject 
 @property (nonatomic, strong) id<BCOTouchReceiver> receiver;
 @property (nonatomic, strong) BCOTouchFilter *filter;
 @end
 
-//====================================
-// BCOTouchRootingInfo (private class)
-//====================================
 @implementation BCOTouchRootingInfo
 @end
 
 
+#pragma mark - BCOTouchObject
+//==========================
+// BCOTouchObject (private)
+//==========================
+@interface BCOTouchObject : NSObject
+@property (nonatomic, strong) UITouch *touch;
+@property (nonatomic, strong) UIView *hitView;
+@end
+
+@implementation BCOTouchObject
+@end
+
+
+#pragma mark - BCOTouchObjectManager
+//==========================
+// BCOTouchObjectManager (private)
+//==========================
+@interface BCOTouchObjectManager : NSObject
+
+@property (nonatomic, strong) NSMutableArray *touchObjects;
+@property (nonatomic, strong) NSMutableArray *hitViews;
+
+@end
+
+static BCOTouchObjectManager *p_sharedObjectManager = nil;
+
+@implementation BCOTouchObjectManager
+
++ (BCOTouchObjectManager *)sharedManager
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        p_sharedObjectManager = [[BCOTouchObjectManager alloc] init];
+    });
+    return p_sharedObjectManager;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _touchObjects = @[].mutableCopy;
+        _hitViews = @[].mutableCopy;
+    }
+    return self;
+}
+
+- (void)receiveTouch:(UITouch *)touch
+{
+    BCOTouchObject *touchObjectShouldBeRemoved = nil;
+    for (BCOTouchObject *aTouchObject in _touchObjects) {
+        if (aTouchObject.touch == touch) {
+            if (touch.phase == UITouchPhaseEnded
+                     || touch.phase == UITouchPhaseCancelled) {
+                touchObjectShouldBeRemoved = aTouchObject;
+            }
+            return;
+        }
+    }
+    
+    if (touchObjectShouldBeRemoved) {
+        [_touchObjects removeObject:touchObjectShouldBeRemoved];
+        return;
+    }
+    
+    if (touch.phase == UITouchPhaseBegan) {
+        BCOTouchObject *touchObject = [[BCOTouchObject alloc] init];
+        touchObject.touch = touch;
+        touchObject.hitView = touch.view;
+        [_touchObjects addObject:touchObject];
+    }
+}
+
+- (UIView *)hitViewInTouch:(UITouch *)touch
+{
+    for (BCOTouchObject *aTouchObject in _touchObjects) {
+        if (aTouchObject.touch == touch) {
+            return aTouchObject.hitView;
+        }
+    }
+    return nil;
+}
+
+@end
+
+
+#pragma mark - BCOTouchFilter
 //==========================
 // BCOTouchFilter
 //==========================
@@ -35,9 +120,6 @@
 
 @end
 
-//==========================
-// BCOTouchFilter
-//==========================
 @implementation BCOTouchFilter
 
 - (BOOL)shouldBlockTouch:(UITouch *)touch toObject:(id)object
@@ -60,23 +142,24 @@
         }
     }
     
+    UIView *hitView = [[BCOTouchObjectManager sharedManager] hitViewInTouch:touch];
     if (view && (_blockMask & BCOTouchFilterMaskHitView)) {
         // ヒットビューと同じインスタンスならブロック
-        if (view == touch.view) {
+        if (view == hitView) {
             return YES;
         }
     }
     
     if (view && (_blockMask & BCOTouchFilterMaskNotHitView)) {
         // ヒットビューと同じインスタンスならブロック
-        if (view != touch.view) {
+        if (view != hitView) {
             return YES;
         }
     }
     
     if (view && (_blockMask & BCOTouchFilterMaskHitViewIsNotSubview)) {
         // ヒットビューが親ビューのサブビューでなければブロック
-        if (![self p_existsView:touch.view inSubviews:view.subviews]) {
+        if (![hitView isDescendantOfView:view]) {
             return YES;
         }
     }
@@ -84,26 +167,10 @@
     return NO;
 }
 
-- (BOOL)p_existsView:(UIView *)findView inSubviews:(NSArray *)subviews {
-    for (UIView *view in subviews) {
-        if (view == findView) {
-            return YES;
-        }
-        
-        if (view.subviews == nil || [view.subviews count] == 0) {
-            continue;
-        }
-        
-        if ([self p_existsView:findView inSubviews:view.subviews]) {
-            return YES;
-        }
-    }
-    return NO;
-}
-
 @end
 
 
+#pragma mark - UIWindow interface
 //==========================================
 // UIWindow category (for method swizzling)
 //==========================================
@@ -114,8 +181,9 @@
 @end
 
 
+#pragma mark - BCOTouchRooter
 //==========================
-// BCOTouchRooter extention
+// BCOTouchRooter
 //==========================
 @interface BCOTouchRooter ()
 
@@ -125,11 +193,8 @@
 
 @end
 
-static BCOTouchRooter *p_sharedInstance = nil;
+static BCOTouchRooter *p_sharedRooter = nil;
 
-//==========================
-// BCOTouchRooter
-//==========================
 @implementation BCOTouchRooter
 
 - (id)init
@@ -153,9 +218,9 @@ static BCOTouchRooter *p_sharedInstance = nil;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        p_sharedInstance = [[BCOTouchRooter alloc] init];
+        p_sharedRooter = [[BCOTouchRooter alloc] init];
     });
-    return p_sharedInstance;
+    return p_sharedRooter;
 }
 
 - (void)addReceiver:(id<BCOTouchReceiver>)receiver
@@ -232,6 +297,7 @@ static BCOTouchRooter *p_sharedInstance = nil;
 @end
 
 
+#pragma mark - UIWindow implementation
 //==========================================
 // UIWindow category (for method swizzling)
 //==========================================
@@ -255,6 +321,8 @@ static BCOTouchRooter *p_sharedInstance = nil;
         NSSet *allTouches = [event allTouches];
         for (UITouch *touch in allTouches) {
             
+            [[BCOTouchObjectManager sharedManager] receiveTouch:touch];
+            
             // フィルタでブロック
             if ([filter shouldBlockTouch:touch toObject:receiver]) {
                 continue;
@@ -276,55 +344,30 @@ static BCOTouchRooter *p_sharedInstance = nil;
                 default:
                     break;
             }
-            
-            // 通常のタッチイベントに対するフィルタでブロック
-            // FIXME: けっこう無理矢理な実装。
-            // UIScrollViewのscrollEnabledをNOにしておけばなんとかなるっぽい。
-            if (rooter.defaultFilter.blocked) {
-                if (touch.phase == UITouchPhaseBegan
-                    || touch.phase == UITouchPhaseMoved) {
-                    UIView *inheritView = touch.view.superview;
-                    while (inheritView != nil) {
-                        if (![rooter.scrollViewsBuf containsObject:inheritView]
-                            && [inheritView isKindOfClass:[UIScrollView class]]
-                            && ((UIScrollView *)inheritView).scrollEnabled == YES) {
-                            [rooter.scrollViewsBuf addObject:inheritView];
-                            ((UIScrollView *)inheritView).scrollEnabled = NO;
-                        }
-                        inheritView = inheritView.superview;
-                    }
-                }
-                else {
-                    UIView *inheritView = touch.view.superview;
-                    while (inheritView != nil) {
-                        if ([rooter.scrollViewsBuf containsObject:inheritView]) {
-                            ((UIScrollView *)inheritView).scrollEnabled = YES;
-                            [rooter.scrollViewsBuf removeObject:inheritView];
-                        }
-                        inheritView = inheritView.superview;
-                    }
-                }
-            }
         }
         
         if ([beganSet count] > 0
             && [receiver respondsToSelector:@selector(didReceiveTouchesBegan:event:)]) {
             [receiver didReceiveTouchesBegan:beganSet event:event];
+            NSLog(@"began");
         }
         
         if ([movedSet count] > 0
             && [receiver respondsToSelector:@selector(didReceiveTouchesMoved:event:)]) {
             [receiver didReceiveTouchesMoved:movedSet.copy event:event];
+            NSLog(@"moved");
         }
         
         if ([endedSet count] > 0
             && [receiver respondsToSelector:@selector(didReceiveTouchesEnded:event:)]) {
             [receiver didReceiveTouchesEnded:endedSet.copy event:event];
+            NSLog(@"end");
         }
         
         if ([cancelledSet count] > 0
             && [receiver respondsToSelector:@selector(didReceiveTouchesCancelled:event:)]) {
             [receiver didReceiveTouchesCancelled:cancelledSet.copy event:event];
+            NSLog(@"cancel");
         }
     }
     

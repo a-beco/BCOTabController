@@ -450,6 +450,30 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 - (void)p_blockAllTouches:(BOOL)isBlocked
 {
     [[BCOTouchRooter sharedRooter] defaultFilter].blocked = isBlocked;
+    
+    NSArray *allChildViews = [self p_allChildViewsBelowView:self.view];
+    for (UIView *aChildView in allChildViews) {
+        aChildView.userInteractionEnabled = !isBlocked;
+        if ([aChildView isKindOfClass:[UIScrollView class]]) {
+            ((UIScrollView *)aChildView).scrollEnabled = !isBlocked;
+        }
+    }
+}
+
+// 引数view以下の全ての子ビュー、孫ビュー、ひ孫ビュー...を再帰的に取得し、NSArrayで返す
+- (NSArray *)p_allChildViewsBelowView:(UIView *)view
+{
+    NSMutableArray *subviewsBuf = @[].mutableCopy;
+    for (UIView *subview in view.subviews) {
+        [subviewsBuf addObject:subview];
+        
+        if ([subview.subviews count] != 0) {
+            // 再帰的なメソッド呼び出し
+            NSArray *subsubviews = [self p_allChildViewsBelowView:subview];
+            [subviewsBuf addObjectsFromArray:subsubviews];
+        }
+    }
+    return [subviewsBuf copy];
 }
 
 @end
