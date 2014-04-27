@@ -13,10 +13,16 @@
 // タブのタイトルはViewControllerのtitleプロパティが反映される。
 @interface BCOTabController : UIViewController
 
-@property (nonatomic, copy) NSArray *viewControllers;     // array of UIViewController
-@property (nonatomic, copy) NSArray *tabColors;           // array of BCOTabColor
+// array of UIViewController or its subclasses.
+@property (nonatomic, copy) NSArray *viewControllers;
 
+// array of BCOTabColor. セットしなければデフォルト.
+@property (nonatomic, copy) NSArray *tabColors;
+
+// 現在表示中のViewController
 @property (nonatomic, readonly) UIViewController *selectedViewController;
+
+// 現在選択中のタブのインデックス
 @property (nonatomic) NSUInteger selectedIndex;
 
 @end
