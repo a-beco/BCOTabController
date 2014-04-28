@@ -467,7 +467,8 @@ static BCOTouchRooter *p_sharedRooter = nil;
     }
     
     // 通常のタッチイベントに対するフィルタでブロック
-    if (rooter.defaultFilter.blocked) {
+    if (event.type == UIEventTypeTouches
+        && rooter.defaultFilter.blocked) {
         return;
     }
     
