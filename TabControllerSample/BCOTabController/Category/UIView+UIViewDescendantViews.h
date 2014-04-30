@@ -10,6 +10,7 @@
 
 @interface UIView (UIViewDescendantViews)
 
+// 全ての子孫ビューを再帰的に取得し、NSArrayで返す。
 - (NSArray *)allDescendantViews;
 
 @end

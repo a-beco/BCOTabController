@@ -10,7 +10,6 @@
 
 @implementation UIView (UIViewDescendantViews)
 
-// 引数view以下の全ての子ビュー、孫ビュー、ひ孫ビュー...を再帰的に取得し、NSArrayで返す。
 - (NSArray *)allDescendantViews
 {
     NSMutableArray *subviewsBuf = @[].mutableCopy;
@@ -19,7 +18,7 @@
         
         if ([subview.subviews count] != 0) {
             // 再帰的なメソッド呼び出し
-            NSArray *subsubviews = [self p_allDescendantViewsBelowView:subview];
+            NSArray *subsubviews = [subview allDescendantViews];
             [subviewsBuf addObjectsFromArray:subsubviews];
         }
     }
