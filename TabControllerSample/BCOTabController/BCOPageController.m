@@ -8,6 +8,7 @@
 
 #import "BCOPageController.h"
 #import "BCOTouchRooter.h"
+#import "UIView+UIViewDescendantViews.h"
 
 CGFloat getX(NSSet *touches, UIView *view)
 {
@@ -485,13 +486,12 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
     
     // scrollEnabledがYESになっているscrollviewを見つけてscrollEnabledをNOにする
-    // NOにしたものはisBlockedをNOにした時に元に戻すので、副作用は最小限になる。
+    // NOにしたものはisBlockedをNOにした時に元に戻す。
     if (isBlocked) {
         disabledScrollViews = @[].mutableCopy;
-        NSArray *allChildViews = [self p_allChildViewsBelowView:self.view];
-        for (UIView *aChildView in allChildViews) {
-            if ([aChildView isKindOfClass:[UIScrollView class]]) {
-                UIScrollView *scrollView = (UIScrollView *)aChildView;
+        for (UIView *aDescendantView in [self.view allDescendantViews]) {
+            if ([aDescendantView isKindOfClass:[UIScrollView class]]) {
+                UIScrollView *scrollView = (UIScrollView *)aDescendantView;
                 if (scrollView.scrollEnabled == YES) {
                     scrollView.scrollEnabled = NO;
                     [disabledScrollViews addObject:scrollView];
@@ -501,20 +501,6 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
 }
 
-// 引数view以下の全ての子ビュー、孫ビュー、ひ孫ビュー...を再帰的に取得し、NSArrayで返す。
-- (NSArray *)p_allChildViewsBelowView:(UIView *)view
-{
-    NSMutableArray *subviewsBuf = @[].mutableCopy;
-    for (UIView *subview in view.subviews) {
-        [subviewsBuf addObject:subview];
-        
-        if ([subview.subviews count] != 0) {
-            // 再帰的なメソッド呼び出し
-            NSArray *subsubviews = [self p_allChildViewsBelowView:subview];
-            [subviewsBuf addObjectsFromArray:subsubviews];
-        }
-    }
-    return [subviewsBuf copy];
-}
+
 
 @end
