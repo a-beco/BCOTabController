@@ -173,11 +173,19 @@ NSString * const kViewControllerTitleKey = @"title";
         return;
     }
     
+    if ([_delegate respondsToSelector:@selector(tabControllerDidStartMoving:)]) {
+        [_delegate tabControllerDidStartMoving:self];
+    }
+    
     if ([_viewControllers count] <= index) {
         index = 0;
     }
     
     _pageController.selectedIndex = index;
+    
+    if ([_delegate respondsToSelector:@selector(tabController:didMoveToIndex:)]) {
+        [_delegate tabController:self didMoveToIndex:index];
+    }
 }
 
 - (NSArray *)p_viewControllerTitles
@@ -220,9 +228,27 @@ NSString * const kViewControllerTitleKey = @"title";
 
 #pragma mark - BCOPageController delegate
 
+- (void)pageControllerDidStartMoving:(BCOPageController *)pageController
+{
+    if ([_delegate respondsToSelector:@selector(tabControllerDidStartMoving:)]) {
+        [_delegate tabControllerDidStartMoving:self];
+    }
+}
+
 - (void)pageController:(BCOPageController *)pageController didMoveToIndex:(NSUInteger)index
 {
     _tabListView.selectedIndex = index;
+    
+    if ([_delegate respondsToSelector:@selector(tabController:didMoveToIndex:)]) {
+        [_delegate tabController:self didMoveToIndex:index];
+    }
+}
+
+- (void)pageControllerDidCancelMoving:(BCOPageController *)pageController
+{
+    if ([_delegate respondsToSelector:@selector(tabControllerDidCancelMoving:)]) {
+        [_delegate tabControllerDidCancelMoving:self];
+    }
 }
 
 #pragma mark - BCOPageController dataSource

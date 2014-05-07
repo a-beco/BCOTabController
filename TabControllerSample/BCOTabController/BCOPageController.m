@@ -372,6 +372,10 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     
     // 通常のタッチを制限
     [self p_blockAllTouches:YES];
+    
+    if ([_delegate respondsToSelector:@selector(pageControllerDidStartMoving:)]) {
+        [_delegate pageControllerDidStartMoving:self];
+    }
 }
 
 // 水平方向のページ移動をキャンセル
@@ -405,6 +409,10 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         
         // 通常のタッチ制限を解除
         [self p_blockAllTouches:NO];
+        
+        if ([_delegate respondsToSelector:@selector(pageControllerDidCancelMoving:)]) {
+            [_delegate pageControllerDidCancelMoving:self];
+        }
     }];
 }
 

@@ -11,7 +11,10 @@
 
 // トップにタブを配置するコンテナビューコントローラ。
 // タブのタイトルはViewControllerのtitleプロパティが反映される。
+@protocol BCOTabControllerDelegate;
 @interface BCOTabController : UIViewController
+
+@property (nonatomic, weak) id<BCOTabControllerDelegate> delegate;
 
 // array of UIViewController or its subclasses.
 @property (nonatomic, copy) NSArray *viewControllers;
@@ -27,5 +30,20 @@
 
 // 横スワイプでビューを移動するか
 @property (nonatomic, getter = isHorizontalSwipeEnabled) BOOL horizontalSwipeEnabled;
+
+@end
+
+
+@protocol BCOTabControllerDelegate <NSObject>
+
+// タブを移動開始した時に呼ばれる
+- (void)tabControllerDidStartMoving:(BCOTabController *)tabController;
+
+// タブを移動した時に呼ばれる
+- (void)tabController:(BCOTabController *)tabController
+        didMoveToIndex:(NSUInteger)index;
+
+// タブ移動をキャンセルした時に呼ばれる
+- (void)tabControllerDidCancelMoving:(BCOTabController *)tabController;
 
 @end

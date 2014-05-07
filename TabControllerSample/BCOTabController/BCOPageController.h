@@ -26,9 +26,15 @@
 
 @protocol BCOPageControllerDelegate <NSObject>
 
+// ページが移動開始した時に呼ばれる
+- (void)pageControllerDidStartMoving:(BCOPageController *)pageController;
+
 // ページが移動した時に呼ばれる
 - (void)pageController:(BCOPageController *)pageController
         didMoveToIndex:(NSUInteger)index;
+
+// 移動をキャンセルした時に呼ばれる
+- (void)pageControllerDidCancelMoving:(BCOPageController *)pageController;
 
 @end
 
