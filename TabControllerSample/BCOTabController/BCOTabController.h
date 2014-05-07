@@ -47,3 +47,11 @@
 - (void)tabControllerDidCancelMoving:(BCOTabController *)tabController;
 
 @end
+
+
+@interface UIViewController (BCOTabControllerAddition)
+
+@property (nonatomic, readonly) BCOTabController *tabController;
+
+@end
+

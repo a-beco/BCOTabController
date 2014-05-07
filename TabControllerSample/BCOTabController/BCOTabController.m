@@ -72,6 +72,9 @@ NSString * const kViewControllerTitleKey = @"title";
 
 - (void)dealloc
 {
+    [_pageController didMoveToParentViewController:nil];
+    [_pageController removeFromParentViewController];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self p_removeViewControllerKVO];
 }
@@ -90,6 +93,7 @@ NSString * const kViewControllerTitleKey = @"title";
     _pageController.dataSource = self;
     [self.view addSubview:_pageController.view];
     [self addChildViewController:_pageController];
+    [_pageController didMoveToParentViewController:self];
     
     // サブビューをレイアウト
     [self p_layoutViews];
@@ -284,3 +288,18 @@ NSString * const kViewControllerTitleKey = @"title";
 }
 
 @end
+
+
+@implementation UIViewController (BCOTabController)
+
+- (BCOTabController *)tabController
+{
+    UIViewController *ancesterViewController = self.parentViewController.parentViewController;
+    if ([ancesterViewController isKindOfClass:[BCOTabController class]]) {
+        return (BCOTabController *)ancesterViewController;
+    }
+    return nil;
+}
+
+@end
+

@@ -225,6 +225,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     // 現在表示しているビューを取り除く
     if (_baseViewController) {
         [_baseViewController.view removeFromSuperview];
+        [_baseViewController willMoveToParentViewController:nil];
         [_baseViewController removeFromParentViewController];
     }
     
@@ -232,6 +233,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     self.baseViewController = displayViewController;
     [self.view addSubview:_baseViewController.view];
     [self addChildViewController:_baseViewController];
+    [_baseViewController didMoveToParentViewController:self];
     
     [self p_layoutBaseView];
 }
@@ -439,10 +441,12 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         // _movingViewControllerを削除して、_baseViewControllerを表示する
         if (_movingState == kBCOPageControllerMovingStateNext) {
             [_movingViewController.view removeFromSuperview];
+            [_movingViewController willMoveToParentViewController:nil];
             [_movingViewController removeFromParentViewController];
         }
         else {
             [_baseViewController.view removeFromSuperview];
+            [_baseViewController willMoveToParentViewController:nil];
             [_baseViewController removeFromParentViewController];
             self.baseViewController = _movingViewController;
         }
