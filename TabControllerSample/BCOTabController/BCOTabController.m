@@ -294,9 +294,12 @@ NSString * const kViewControllerTitleKey = @"title";
 
 - (BCOTabController *)tabController
 {
-    UIViewController *ancesterViewController = self.parentViewController.parentViewController;
-    if ([ancesterViewController isKindOfClass:[BCOTabController class]]) {
-        return (BCOTabController *)ancesterViewController;
+    UIViewController *ancesterViewController = self.parentViewController;
+    while (ancesterViewController != nil) {
+        if ([ancesterViewController isKindOfClass:[BCOTabController class]]) {
+            return (BCOTabController *)ancesterViewController;
+        }
+        ancesterViewController = ancesterViewController.parentViewController;
     }
     return nil;
 }

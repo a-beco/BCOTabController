@@ -14,8 +14,8 @@
 // タッチイベントをルーティングするクラス。
 //
 // addReceiver:で追加されたレシーバオブジェクトに対し、タッチイベントを渡す。
-// filterForReceiver:で取得できるフィルタオブジェクトにblockMaskで、
-// 通知するか否かの条件を設定できる。
+// filterForReceiver:でフィルタオブジェクトを取得してblockMaskを設定することで、
+// タッチイベントを通知するか否かの条件を設定できる。
 //
 // Note: スレッドセーフではありません。
 @interface BCOTouchRooter : NSObject
