@@ -4,6 +4,9 @@ BCOTabController
 Gunosy風のタブを付けるコンテナビューコントローラ。  
 This is the container view controller, which shows tabs on the top of the screen like Gunosy!
 
+![screenshot1](./sc/screen1.png)　
+![screenshot2](./sc/screen2.png)
+
 ## Useage
 
 1. Copy "BCOTabController" folder in "TabControllerSample" to your project.
