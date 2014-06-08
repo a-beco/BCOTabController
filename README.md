@@ -9,7 +9,7 @@ This is the container view controller, which shows tabs on the top of the screen
 1. Copy "BCOTabController" folder in "TabControllerSample" to your project.
 2. Write code in AppDelegate.m like below. 
 
-````objective-c
+````smalltalk
 // create 10 view controllers.
 NSMutableArray *viewControllersBuf = @[].mutableCopy;
 for (int i = 0; i < 10; i++) {
