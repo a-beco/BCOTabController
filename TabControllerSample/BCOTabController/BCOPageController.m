@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
 @property (nonatomic, strong) UIViewController *movingViewController;
 @property (nonatomic, strong) NSTimer *trackingTimer;
 @property (nonatomic, strong) UIControl *blockTouchCoverView;
+@property (nonatomic, strong) UIView *sideFrames;
 @end
 
 @implementation BCOPageController {
@@ -308,6 +309,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     CGFloat step = kBCOPageControllerVelocityGradient * diffX;
     
     _movingViewController.view.frame = CGRectOffset(movingViewFrame, step, 0);
+    [self p_updateSideFrames];
 }
 
 // xの位置に_movingViewControllerを移動させる
@@ -322,6 +324,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     if (animated) {
         [UIView animateWithDuration:kBCOPageControllerMovingAnimationDuration animations:^{
             _movingViewController.view.frame = toFrame;
+            [self p_updateSideFrames];
         } completion:^(BOOL finished) {
             if (completion) {
                 completion();
@@ -330,6 +333,7 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     }
     else {
         _movingViewController.view.frame = toFrame;
+        [self p_updateSideFrames];
         completion();
     }
 }
@@ -375,6 +379,9 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
     // 通常のタッチを制限
     [self p_blockAllTouches:YES];
     
+    // 横枠を追加
+    [self p_updateSideFrames];
+    
     if ([_delegate respondsToSelector:@selector(pageControllerDidStartMoving:)]) {
         [_delegate pageControllerDidStartMoving:self];
     }
@@ -411,6 +418,9 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         
         // 通常のタッチ制限を解除
         [self p_blockAllTouches:NO];
+        
+        // 横枠を削除
+        [self p_updateSideFrames];
         
         if ([_delegate respondsToSelector:@selector(pageControllerDidCancelMoving:)]) {
             [_delegate pageControllerDidCancelMoving:self];
@@ -467,6 +477,9 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         // 通常のタッチ制限を解除
         [self p_blockAllTouches:NO];
         
+        // 横枠を削除
+        [self p_updateSideFrames];
+        
         if ([_delegate respondsToSelector:@selector(pageController:didMoveToIndex:)]) {
             [_delegate pageController:self didMoveToIndex:_selectedIndex];
         }
@@ -479,6 +492,37 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         return [_dataSource pageController:self pageForIndex:index];
     }
     return nil;
+}
+
+- (void)p_updateSideFrames
+{
+    if (_movingState == kBCOPageControllerMovingStateNone) {
+        if (_sideFrames) {
+            [_sideFrames removeFromSuperview];
+            _sideFrames = nil;
+        }
+    }
+    else {
+        const int LEFT_TAG = 10, RIGHT_TAG = 11;
+        CGRect movingFrame = _movingViewController.view.frame;
+        
+        if (!_sideFrames) {
+            _sideFrames = [[UIView alloc] initWithFrame:movingFrame];
+            [self.view addSubview:_sideFrames];
+            
+            UIView *left = [[UIView alloc] initWithFrame:CGRectMake(-1, 0, 1, movingFrame.size.height)];
+            left.backgroundColor = [UIColor lightGrayColor];
+            left.tag = LEFT_TAG;
+            [_sideFrames addSubview:left];
+            
+            UIView *right = [[UIView alloc] initWithFrame:CGRectMake(movingFrame.size.width, 0, 1, movingFrame.size.height)];
+            right.backgroundColor = [UIColor lightGrayColor];
+            right.tag = RIGHT_TAG;
+            [_sideFrames addSubview:right];
+        }
+        
+        _sideFrames.frame = movingFrame;
+    }
 }
 
 // 全てのタッチイベントをブロックする。
