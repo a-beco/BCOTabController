@@ -1,10 +1,11 @@
 BCOTabController
 ================
 
-Gunosy風のタブを付けるコンテナビューコントローラ。
+Gunosy風のタブを付けるコンテナビューコントローラ。  
 This is the container view controller, which shows tabs on the top of the screen like Gunosy!
 
-- Useage
+## Useage
+
 1. Copy "BCOTabController" folder in "TabControllerSample" to your project.
 2. Write code in AppDelegate.m like below. 
 
@@ -23,5 +24,5 @@ _tabController.viewControllers = [viewControllersBuf copy];
 self.window.rootViewController = _tabController;
 ````
 
-- Opiton
+## Opiton
 You can change tab colors (background, highlighted background, textc olor, highlighted text color)
