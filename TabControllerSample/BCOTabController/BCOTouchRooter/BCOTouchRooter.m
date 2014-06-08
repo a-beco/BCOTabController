@@ -126,7 +126,7 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
 @property (nonatomic, strong) NSMutableArray *rootingTouches;
 
 // BCOTouchRooterでのみ使われる
-- (BOOL)shouldBlockTouch:(UITouch *)touch toObject:(id)object;
+- (void)filterEvent:(UIEvent *)event began:(NSSet **)beganSet moved:(NSSet **)movedSet ended:(NSSet **)endSet cancelled:(NSSet **)cancelledSet receiver:(id)receiver;
 
 @end
 
@@ -139,6 +139,46 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
         _rootingTouches = @[].mutableCopy;
     }
     return self;
+}
+
+- (void)filterEvent:(UIEvent *)event began:(NSSet **)beganSet moved:(NSSet **)movedSet ended:(NSSet **)endedSet cancelled:(NSSet **)cancelledSet receiver:(id)receiver
+{
+    NSMutableSet *beganSetBuf = [NSMutableSet setWithCapacity:0];
+    NSMutableSet *movedSetBuf = [NSMutableSet setWithCapacity:0];
+    NSMutableSet *endedSetBuf = [NSMutableSet setWithCapacity:0];
+    NSMutableSet *cancelledSetBuf = [NSMutableSet setWithCapacity:0];
+    
+    for (UITouch *touch in [event allTouches]) {
+        
+        [[BCOTouchObjectManager sharedManager] saveCurrentTouch:touch];
+        
+        // フィルタでブロック
+        if ([self shouldBlockTouch:touch toObject:receiver]) {
+            continue;
+        }
+        
+        switch (touch.phase) {
+            case UITouchPhaseBegan:
+                [beganSetBuf addObject:touch];
+                break;
+            case UITouchPhaseMoved:
+                [movedSetBuf addObject:touch];
+                break;
+            case UITouchPhaseEnded:
+                [endedSetBuf addObject:touch];
+                break;
+            case UITouchPhaseCancelled:
+                [cancelledSetBuf addObject:touch];
+                break;
+            default:
+                break;
+        }
+    }
+    
+    *beganSet = [NSSet setWithSet:beganSetBuf];
+    *movedSet = [NSSet setWithSet:movedSetBuf];
+    *endedSet = [NSSet setWithSet:endedSetBuf];
+    *cancelledSet = [NSSet setWithSet:cancelledSetBuf];
 }
 
 - (BOOL)shouldBlockTouch:(UITouch *)touch toObject:(id)object
@@ -196,7 +236,6 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
     }
 
     [self p_addRootingTouch:touch];
-    
     return NO;
 }
 
@@ -244,6 +283,65 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
 
 @end
 
+@interface BCODefaultTouchFilter : BCOTouchFilter
+
+@property (nonatomic, strong) NSMutableArray *unblockedEvents;
+
+- (BOOL)shouldBlockEvent:(UIEvent *)event;
+
+@end
+
+@implementation BCODefaultTouchFilter
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        _unblockedEvents = @[].mutableCopy;
+    }
+    return self;
+}
+
+- (BOOL)shouldBlockEvent:(UIEvent *)event
+{
+    if (event.type != UIEventTypeTouches)
+        return YES;
+    
+    if (self.blocked) {
+        for (UIEvent *aUnblockedEvent in _unblockedEvents) {
+            if (event == aUnblockedEvent) {
+                // タッチ開始したものは必ずタッチ終了を呼ぶ.
+                for (UITouch *touch in [event allTouches]) {
+                    if (touch.phase == UITouchPhaseEnded
+                        || touch.phase == UITouchPhaseCancelled) {
+                        return NO;
+                    }
+                }
+                break;
+            }
+        }
+        return YES;
+    }
+    
+    // Beganを含むイベントのうち、実行されたものを保持
+    for (UITouch *touch in [event allTouches]) {
+        if (touch.phase == UITouchPhaseBegan
+            && ![_unblockedEvents containsObject:event]) {
+            [_unblockedEvents addObject:event];
+            break;
+        }
+    }
+    
+    return NO;
+}
+
+- (void)setBlocked:(BOOL)blocked
+{
+    [super setBlocked:blocked];
+}
+
+@end
+
 
 #pragma mark - BCOTouchRootingInfo
 //====================================
@@ -282,7 +380,6 @@ static BCOTouchObjectManager *p_sharedObjectManager = nil;
 
 @property (nonatomic, strong) NSMutableArray *rootingInfoArray;
 @property (nonatomic, strong) BCOTouchFilter *defaultFilter;
-@property (nonatomic, strong) NSMutableArray *scrollViewsBuf;
 
 @end
 
@@ -295,8 +392,7 @@ static BCOTouchRooter *p_sharedRooter = nil;
     self = [super init];
     if (self) {
         _rootingInfoArray = @[].mutableCopy;
-        _defaultFilter = [[BCOTouchFilter alloc] init];
-        _scrollViewsBuf = @[].mutableCopy;
+        _defaultFilter = [[BCODefaultTouchFilter alloc] init];
         
         // method swizzling
         [self p_processMethodSwizzlingFromClass:[UIWindow class]
@@ -410,38 +506,14 @@ static BCOTouchRooter *p_sharedRooter = nil;
         id<BCOTouchReceiver> receiver = rootingInfo.receiver;
         BCOTouchFilter *filter = rootingInfo.filter;
         
-        // phaseごとにsetを分ける
-        NSMutableSet *beganSet = [NSMutableSet setWithCapacity:0];
-        NSMutableSet *movedSet = [NSMutableSet setWithCapacity:0];
-        NSMutableSet *endedSet = [NSMutableSet setWithCapacity:0];
-        NSMutableSet *cancelledSet = [NSMutableSet setWithCapacity:0];
-        NSSet *allTouches = [event allTouches];
-        for (UITouch *touch in allTouches) {
-            
-            [[BCOTouchObjectManager sharedManager] saveCurrentTouch:touch];
-            
-            // フィルタでブロック
-            if ([filter shouldBlockTouch:touch toObject:receiver]) {
-                continue;
-            }
-            
-            switch (touch.phase) {
-                case UITouchPhaseBegan:
-                    [beganSet addObject:touch];
-                    break;
-                case UITouchPhaseMoved:
-                    [movedSet addObject:touch];
-                    break;
-                case UITouchPhaseEnded:
-                    [endedSet addObject:touch];
-                    break;
-                case UITouchPhaseCancelled:
-                    [cancelledSet addObject:touch];
-                    break;
-                default:
-                    break;
-            }
-        }
+        // フィルタリング
+        NSSet* beganSet, *movedSet, *endedSet, *cancelledSet;
+        [filter filterEvent:event
+                      began:&beganSet
+                      moved:&movedSet
+                      ended:&endedSet
+                  cancelled:&cancelledSet
+                   receiver:receiver];
         
         [[BCOTouchObjectManager sharedManager] removeObsoleteTouches];
         
@@ -467,8 +539,7 @@ static BCOTouchRooter *p_sharedRooter = nil;
     }
     
     // 通常のタッチイベントに対するフィルタでブロック
-    if (event.type == UIEventTypeTouches
-        && rooter.defaultFilter.blocked) {
+    if ([(BCODefaultTouchFilter *)rooter.defaultFilter shouldBlockEvent:event]) {
         return;
     }
     
