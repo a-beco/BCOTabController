@@ -114,9 +114,9 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
 
 - (BCOTabColor *)p_defaultTabColor
 {
-    return [BCOTabColor tabColorWithBackgroundColor:[UIColor colorWithWhite:0.7 alpha:1.0]
-                                          textColor:[UIColor colorWithWhite:0.3 alpha:1.0]
-                         highlightedBackgroundColor:[UIColor colorWithWhite:0.3 alpha:1.0]
+    return [BCOTabColor tabColorWithBackgroundColor:[UIColor colorWithWhite:0.9 alpha:1.0]
+                                          textColor:[UIColor colorWithWhite:0.2 alpha:1.0]
+                         highlightedBackgroundColor:[UIColor colorWithWhite:0.4 alpha:1.0]
                                highlightedTextColor:[UIColor colorWithWhite:1.0 alpha:1.0]];
 }
 

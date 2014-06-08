@@ -31,6 +31,9 @@
 // 横スワイプでビューを移動するか
 @property (nonatomic, getter = isHorizontalSwipeEnabled) BOOL horizontalSwipeEnabled;
 
+// ViewControllerのtitleがnilの時に表示するタイトル. nilは無効.
+@property (nonatomic, copy) NSString *defaultTabTitle;
+
 @end
 
 

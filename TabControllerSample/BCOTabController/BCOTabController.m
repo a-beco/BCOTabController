@@ -14,6 +14,7 @@
 const CGFloat kBCOTabControllerStatusBarHeight = 20.0;
 const CGFloat kBCOTabControllerTabListViewHeight = 50.0;
 NSString * const kViewControllerTitleKey = @"title";
+NSString * const kDefaultTabTitle = @"new tab";
 
 @interface BCOTabController () <BCOTabListViewDelegate,
                                 BCOPageControllerDelegate,
@@ -56,6 +57,7 @@ NSString * const kViewControllerTitleKey = @"title";
 
 - (void)initialize
 {
+    _defaultTabTitle = kDefaultTabTitle;
     self.view.backgroundColor = [UIColor whiteColor];
     
     // notifications
@@ -155,6 +157,12 @@ NSString * const kViewControllerTitleKey = @"title";
     _pageController.horizontalSwipeEnabled = horizontalSwipeEnabled;
 }
 
+- (void)setDefaultTabTitle:(NSString *)defaultTabTitle
+{
+    if (defaultTabTitle)
+        _defaultTabTitle = defaultTabTitle.copy;
+}
+
 #pragma mark - private
 
 - (void)p_layoutViews
@@ -196,7 +204,8 @@ NSString * const kViewControllerTitleKey = @"title";
 {
     NSMutableArray *titlesBuf = @[].mutableCopy;
     for (UIViewController *vc in _viewControllers) {
-        [titlesBuf addObject:vc.title];
+        NSString *title = (vc.title) ? vc.title : _defaultTabTitle;
+        [titlesBuf addObject:title];
     }
     return [titlesBuf copy];
 }
