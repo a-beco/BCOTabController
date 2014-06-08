@@ -503,21 +503,20 @@ typedef NS_ENUM(NSUInteger, BCOPageControllerMovingState) {
         }
     }
     else {
-        const int LEFT_TAG = 10, RIGHT_TAG = 11;
         CGRect movingFrame = _movingViewController.view.frame;
         
         if (!_sideFrames) {
             _sideFrames = [[UIView alloc] initWithFrame:movingFrame];
             [self.view addSubview:_sideFrames];
             
+            UIColor *sideFrameColor = [UIColor lightGrayColor];
+            
             UIView *left = [[UIView alloc] initWithFrame:CGRectMake(-1, 0, 1, movingFrame.size.height)];
-            left.backgroundColor = [UIColor lightGrayColor];
-            left.tag = LEFT_TAG;
+            left.backgroundColor = sideFrameColor;
             [_sideFrames addSubview:left];
             
             UIView *right = [[UIView alloc] initWithFrame:CGRectMake(movingFrame.size.width, 0, 1, movingFrame.size.height)];
-            right.backgroundColor = [UIColor lightGrayColor];
-            right.tag = RIGHT_TAG;
+            right.backgroundColor = sideFrameColor;
             [_sideFrames addSubview:right];
         }
         

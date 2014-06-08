@@ -99,6 +99,7 @@ const CGFloat kBCOTabListViewTabTopMargin = 5;
     _tabColors = [tabColors copy];
     
     [self p_updateColors];
+    [self p_updateBorderBackgroundColor];
 }
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex
